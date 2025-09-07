@@ -28,4 +28,4 @@ Entity Sets:
 Questions/Use Cases:
 - Which local company has the best glassdoor rating?
 - What job role is most in demand locally? 
-- Who is a contact for <x> company?
+- Who is a contact for a certain company?
