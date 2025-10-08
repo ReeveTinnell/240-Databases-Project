@@ -62,23 +62,23 @@ def selectTable():
     tableOption = "1"
     while tableOption != 'q':
         tableOption = input(tableText)
-        if menuOption == "1":
+        if tableOption == "1":
             return "company"
-        elif menuOption == "2":
+        elif tableOption == "2":
             return "contact"
-        elif menuOption == "3":
+        elif tableOption == "3":
             return "job"
-        elif menuOption == "4":
+        elif tableOption == "4":
             return "full_time"
-        elif menuOption == "5":
+        elif tableOption == "5":
             return "part_time"
-        elif menuOption == "6":
+        elif tableOption == "6":
             return "contract"
-        elif menuOption == "7":
+        elif tableOption == "7":
             return "job_certs"
-        elif menuOption == "8":
+        elif tableOption == "8":
             return "certification"
-        elif menuOption == "9":
+        elif tableOption == "9":
             return "job_role"
 
 menuText = """Please select one of the following options:
