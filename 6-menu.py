@@ -74,11 +74,11 @@ def selectTable():
             return "part_time"
         elif menuOption == "6":
             return "contract"
-        elif menuOption == "7"
+        elif menuOption == "7":
             return "job_certs"
-        elif menuOption == "8"
+        elif menuOption == "8":
             return "certification"
-        elif menuOption == "9"
+        elif menuOption == "9":
             return "job_role"
 
 menuText = """Please select one of the following options:
