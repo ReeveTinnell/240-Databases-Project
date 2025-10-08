@@ -32,7 +32,7 @@ def addCompany():
     website = input("Company website: ")
     size = input ("Company size: ")
     location = input ("Company location: ")
-    industry = input ("Companies industry")
+    industry = input ("Companies industry: ")
     connection = getConnection()
     mycursor = connection.cursor()
     query = "INSERT INTO company (name, industry, location, size, website) values (%s, %s, %s, %s, %s);"
@@ -41,10 +41,10 @@ def addCompany():
     connection.close()
 
 def deleteCompany():
-    rowToDelete = input("What is the id of the row to delete? ")
+    rowToDelete = input("What is the id of the company you wish to delete? ")
     connection = getConnection()
     myCursor = connection.cursor()
-    myCursor.execute("delete from actor where actor_id=%s", (rowToDelete,))
+    myCursor.execute("DELETE FROM company where id=%s", (rowToDelete,))
     connection.commit()
     connection.close()
 
