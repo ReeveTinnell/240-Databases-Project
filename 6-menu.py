@@ -61,25 +61,25 @@ def updateRow():
 def selectTable():
     tableOption = "1"
     while tableOption != 'q':
-	tableOption = input(tableText)
-	if menuOption == "1":
+        tableOption = input(tableText)
+        if menuOption == "1":
             return "company"
-	elif menuOption == "2":
-	    return "contact"
-	elif menuOption == "3":
-	    return "job"
-	elif menuOption == "4":
-	    return "full_time"
-	elif menuOption == "5":
-	    return "part_time"
-	elif menuOption == "6":
-	    return "contract"
-	elif menuOption == "7"
-	    return "job_certs"
-	elif menuOption == "8"
-	    return "certification"
-	elif menuOption == "9"
-	    return "job_role"
+        elif menuOption == "2":
+            return "contact"
+        elif menuOption == "3":
+            return "job"
+        elif menuOption == "4":
+            return "full_time"
+        elif menuOption == "5":
+            return "part_time"
+        elif menuOption == "6":
+            return "contract"
+        elif menuOption == "7"
+            return "job_certs"
+        elif menuOption == "8"
+            return "certification"
+        elif menuOption == "9"
+            return "job_role"
 
 menuText = """Please select one of the following options:
 1) Display contents of table
