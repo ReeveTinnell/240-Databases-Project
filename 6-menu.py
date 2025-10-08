@@ -40,7 +40,7 @@ def addCompany():
     connection.commit()
     connection.close()
 
-def deleteRowFromTable():
+def deleteCompany():
     rowToDelete = input("What is the id of the row to delete? ")
     connection = getConnection()
     myCursor = connection.cursor()
@@ -48,7 +48,7 @@ def deleteRowFromTable():
     connection.commit()
     connection.close()
 
-def updateRow():
+def updateCompany():
     rowToUpdate = input("What is the id of the row you want to update? ")
     connection = getConnection()
     myCursor = connection.cursor()
@@ -112,9 +112,9 @@ if __name__ == "__main__":
         if menuOption == "1":
             printTable()
         elif menuOption == "2":
-            insertIntoTable()
+            addCompany()
         elif menuOption == "3":
-            updateRow()
+            updateCompany()
         elif menuOption == "4":
-            deleteRowFromTable()
+            deleteCompany()
 
