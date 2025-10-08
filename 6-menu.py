@@ -18,7 +18,7 @@ def printTable():
     table = selectTable()
     connection = getConnection()
     mycursor = connection.cursor()
-    mycursor.execute("select * from " + table)
+    mycursor.execute("SELECT * FROM " + table)
     myresult = mycursor.fetchone()
     print("In the " + table + " table, we have the following items: ")
     while myresult is not None:
@@ -28,12 +28,15 @@ def printTable():
     print()
 
 def addCompany():
-    firstname = input("Please give the first name of the actor: ")
-    lastname = input("Please give the last name of the actor: ")
+    name = input("Company name: ")
+    website = input("Company website: ")
+    size = input ("Company size: ")
+    location = input ("Company location: ")
+    industry = input ("Companies industry")
     connection = getConnection()
     mycursor = connection.cursor()
-    query = "insert into actor (first_name, last_name) values (%s, %s);"
-    mycursor.execute(query, (firstname, lastname))
+    query = "INSERT INTO company (name, industry, location, size, website) values (%s, %s, %s, %s, %s);"
+    mycursor.execute(query, (name, industry, location, size, website))
     connection.commit()
     connection.close()
 
