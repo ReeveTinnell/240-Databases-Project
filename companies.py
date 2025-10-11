@@ -74,7 +74,7 @@ if __name__ == "__main__":
     while menuOption != 'q':
         menuOption = input(menuText)
         if menuOption == "1":
-            printTable()
+            showCompanies
         elif menuOption == "2":
             addCompany()
         elif menuOption == "3":
