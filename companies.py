@@ -58,7 +58,7 @@ def updateCompany():
     size = input ("Company size: ")
     location = input ("Company location: ")
     industry = input ("Companies industry: ")
-    query = "INSERT INTO company (name, industry, location, size, website) values (%s, %s, %s, %s, %s);"
+    query = "UPDATE company SET name=%s, industry=%s, location=%s, size=%s, website=%s)"
     myCursor.execute(query, (name, industry, location, size, website))
     connection.commit()
     connection.close()
