@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# This example uses a credentials stored in a .env file defining SQL_HOST, SQL_USER, SQL_PWD, and SQL_DB
 
 import mysql.connector, os
 from dotenv import load_dotenv
@@ -14,13 +13,12 @@ def getConnection():
     )
     return connection
 
-def printTable():
-    table = selectTable()
+def showCompanies():
     connection = getConnection()
     mycursor = connection.cursor()
-    mycursor.execute("SELECT * FROM " + table)
+    mycursor.execute("SELECT * FROM company")
     myresult = mycursor.fetchone()
-    print("In the " + table + " table, we have the following items: ")
+    print("In the company table, we have the following items: ")
     while myresult is not None:
         print(myresult)
         myresult = mycursor.fetchone()
@@ -61,49 +59,15 @@ def updateCompany():
     connection.commit()
     connection.close()
 
-def selectTable():
-    tableOption = "1"
-    while tableOption != 'q':
-        tableOption = input(tableText)
-        if tableOption == "1":
-            return "company"
-        elif tableOption == "2":
-            return "contact"
-        elif tableOption == "3":
-            return "job"
-        elif tableOption == "4":
-            return "full_time"
-        elif tableOption == "5":
-            return "part_time"
-        elif tableOption == "6":
-            return "contract"
-        elif tableOption == "7":
-            return "job_certs"
-        elif tableOption == "8":
-            return "certification"
-        elif tableOption == "9":
-            return "job_role"
 
 menuText = """Please select one of the following options:
-1) Display contents of table
+1) Display companies
 2) Add a company
 3) Update a company
 4) Delete a company
 q) Quit
 """
 
-tableText = """Please select from the following tables:
-1) Company
-2) Contact
-3) Job
-4) Full_Time
-5) Part_Time
-6) Contract
-7) Job_Certs
-8) Certification
-9) Job_Role
-q) Quit
-"""
 
 if __name__ == "__main__":
     menuOption = "1"
