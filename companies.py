@@ -16,7 +16,7 @@ def getConnection():
 def showCompanies():
     connection = getConnection()
     mycursor = connection.cursor()
-    mycursor.execute("SELECT * FROM company;")
+    mycursor.execute("SELECT * FROM company")
     myresult = mycursor.fetchone()
     print("In the company table, we have the following items: ")
     while myresult is not None:
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     while menuOption != 'q':
         menuOption = input(menuText)
         if menuOption == "1":
-            showCompanies
+            showCompanies()
         elif menuOption == "2":
             addCompany()
         elif menuOption == "3":
