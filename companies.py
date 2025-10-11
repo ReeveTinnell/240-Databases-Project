@@ -32,9 +32,9 @@ def addCompany():
     location = input ("Company location: ")
     industry = input ("Companies industry: ")
     connection = getConnection()
-    mycursor = connection.cursor()
+    myCursor = connection.cursor()
     query = "INSERT INTO company (name, industry, location, size, website) values (%s, %s, %s, %s, %s);"
-    mycursor.execute(query, (name, industry, location, size, website))
+    myCursor.execute(query, (name, industry, location, size, website))
     connection.commit()
     connection.close()
 
@@ -59,7 +59,7 @@ def updateCompany():
     location = input ("Company location: ")
     industry = input ("Companies industry: ")
     query = "INSERT INTO company (name, industry, location, size, website) values (%s, %s, %s, %s, %s);"
-    mycursor.execute(query, (name, industry, location, size, website))
+    myCursor.execute(query, (name, industry, location, size, website))
     connection.commit()
     connection.close()
 
