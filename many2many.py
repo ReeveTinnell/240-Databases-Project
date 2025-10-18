@@ -78,8 +78,8 @@ def addCert():
     addToJob = input("Please provide the job.id you would like to add a certification to")
     addCert = input("What certification (cert.id) would you like to add to this job?")
     query = "INSERT INTO job_certs (job_id, cert_id) VALUES (%s, %s)"
-    myCursor.execute(query, (addToJob, addCert)))
-
+    myCursor.execute(query, (addToJob, addCert))
+    
 
 def removeCert()
     myCursor.execute("SELECT job.id, job.title, certificate.id, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id")
