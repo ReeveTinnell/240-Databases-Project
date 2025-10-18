@@ -87,10 +87,10 @@ def removeCert():
     delJob = input("Select the job.id you would like to delete a certification from #> ")
     delCert = input("Which certifcation (cert.id) would you like to remove? #> ")
     query = "DELETE FROM job_certs WHERE job_id=%s AND cert_id=%s"
-    mycusor.execute(query, (delJob, delCert))
+    myCursor.execute(query, (delJob, delCert))
     connection.commit()
     connection.close()
-    
+
 
 
 menuText = """Please select one of the following options:
