@@ -13,55 +13,66 @@ def getConnection():
     )
     return connection
 
-""" company = {name, industry, website, location, size}
-contact = {name, email, phone, position}
-job = {title, post_date, close_date, hyperlink}
-fullTime = {job.id, pay, benefits, schedule}
-partTime = {job.id, wage, schedule}
-contract = {job.id, terms, pay, schedule}
-certs = {name, cert_body, cost, requirements}
-jobCerts = {job.id, cert.id}
-jobRole = {title, avgWage, description} """
 
-#tables = {"certification", "company", "contact", "contract", "full_time", "job", "job_certs", "job_role", "part_time"}
+"""
+getAttributes fuction takes a table and returns the attributes (columns) of a table. 
+"""
+def getAttributes(table):
+    myResult = []
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute("DESCRIBE %s", (table))
+    myResult = myCursor.fetchone()
+    while myResult is not None:
+        myResult = ' '.join(myResult)
+        myResult = myResult.strip()
+        tables.append(myResult)
+        myResult = myCursor.fetchone()
+    return myResult
+    connection.close()
 
-tables = {}
 
 def getTables():
+    myResult = []
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute("SHOW TABLES")
-    myResult = myCursor.fethone()
+    myResult = myCursor.fetchone()
     while myResult is not None:
+        myResult = ' '.join(myResult)
+        myResult = myResult.strip()
         tables.append(myResult)
-        myReslut = myCursor.fetchone()
+        myResult = myCursor.fetchone()
+    return myResult
     connection.close()
 
-def showTables():
+def showAll():
     number=1
+    tables = getTables()
     for table in tables:
-        print(f"{number} {table}")
+        print(f"{number}\) {table}")
         number=number+1
-
-
+    print("")
 
 
 menuText = """Please select one of the following options:
-1) Display Tables
-2) Add a company
-3) Update a company
-4) Delete a company
+1) Show All Tables
+2) Show Contents of a Table
+3) Add a company
+4) Update a company
+5) Delete a company
 q) Quit
 """
 
 if __name__ == "__main__":
+    getTables()
     menuOption = "1"
     while menuOption != 'q':
         menuOption = input(menuText)
         if menuOption == "1":
-            showTables()
+            showAll()
         elif menuOption == "2":
-            addCompany()
+            showTable()
         elif menuOption == "3":
             updateCompany()
         elif menuOption == "4":
