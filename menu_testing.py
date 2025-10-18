@@ -59,7 +59,7 @@ def showTable():
     showAll()
     tableSelection = input("Select a table to view")
     tables = getTables()
-    tableOption = tables[tableSection - 1] 
+    tableOption = tables[tableSelection - 1] 
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT * FROM %s", (tableOption))
