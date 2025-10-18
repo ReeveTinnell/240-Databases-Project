@@ -75,9 +75,15 @@ def addCert():
     connection.close()
 
     
-
 def removeCert():
+    connection = getConnection()
+    myCursor = connection.cursor()
     myCursor.execute("SELECT job.id, job.title, certificate.id, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id")
+    jobCerts = myCursor.fetchall()
+    print(f"There are {len(jobCerts)} certifications required for jobs in the database:")
+    for cert in jobCerts:
+        print(cert)
+    print()
 
 
 menuText = """Please select one of the following options:
