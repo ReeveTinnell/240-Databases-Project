@@ -57,9 +57,9 @@ def showAll():
 
 def showTable():
     showAll()
-    tableSelection = input("Select a table to view")
+    tableSelection = int(input("Select a table to view")) - 1
     tables = getTables()
-    tableOption = tables[tableSelection - 1] 
+    tableOption = tables[tableSelection]
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute("SELECT * FROM %s", (tableOption))
@@ -74,10 +74,12 @@ def showTable():
 
 menuText = """Please select one of the following options:
 1) Show All Tables
-2) Show Contents of a Table
+2) Show Contents of any Table (in testing)
 3) Add a company
 4) Update a company
 5) Delete a company
+6) Show Jobs
+7) 
 q) Quit
 """
 
