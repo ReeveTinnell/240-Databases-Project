@@ -41,8 +41,8 @@ def printCerts():
 def printCertsForJob():
     connection = getConnection()
     myCursor = connection.cursor()
-    job_id = input("For which job_id would you like to view the certifications? ")
-    myCursor.execute("SELECT job.id, job.title, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id WHERE job_id=%s)", (job_id,))
+    job_id = input("For which job_id would you like to view the certifications?")
+    myCursor.execute("SELECT cetification.id, job.title, certification.name, FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id WHERE job_id=%s)", (job_id,))
     myResult = myCursor.fetchall()
     print(f"There are {len(myResult)} certifications: ")
     for row in myResult:
