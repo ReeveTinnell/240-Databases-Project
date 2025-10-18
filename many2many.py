@@ -78,12 +78,19 @@ def addCert():
 def removeCert():
     connection = getConnection()
     myCursor = connection.cursor()
-    myCursor.execute("SELECT job.id, job.title, certificate.id, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id")
+    myCursor.execute("SELECT job.id, job.title, certification.id, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id")
     jobCerts = myCursor.fetchall()
     print(f"There are {len(jobCerts)} certifications required for jobs in the database:")
     for cert in jobCerts:
         print(cert)
     print()
+    delJob = input("Select the job.id you would like to delete a certification from #> ")
+    delCert = input("Which certifcation (cert.id) would you like to remove? #> ")
+    query = "DELETE FROM job_certs WHERE job_id=%s AND cert_id=%s"
+    mycusor.execute(query, (delJob, delCert))
+    connection.commit()
+    connection.close()
+    
 
 
 menuText = """Please select one of the following options:
