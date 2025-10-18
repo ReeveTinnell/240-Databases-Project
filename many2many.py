@@ -62,8 +62,8 @@ def printJobsWithCert():
 menuText = """Please select one of the following options:
 1) Print jobs
 2) Print certifications
-3) Print jobs a certification appears in
-4) Print certifications in a Job
+3) Print certifications for a job
+4) Print jobs which require a certification
 5) Add a certification to a job (unimplemented)
 6) Remove a certification from a job (unimplemented)
 q) Quit
@@ -74,10 +74,10 @@ if __name__ == "__main__":
     while menuOption != 'q':
         menuOption = input(menuText)
         if menuOption == "1":
-            printActors()
+            printJobs()
         elif menuOption == "2":
-            printFilms()
+            printCerts()
         elif menuOption == "3":
-            printFilmsForActor()
+            printCertsForJob()
         elif menuOption == "4":
-            printActorsForFilm()
+            printJobsWithCert()
