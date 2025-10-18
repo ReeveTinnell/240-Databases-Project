@@ -58,6 +58,32 @@ def printJobsWithCert():
     for row in myResult:
         print(row)
 
+def addCert():
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT * from job")
+    print("The following jobs exist in the database: ")
+    job = myCursor.fetchone()
+    while job is not None:
+        print(job)
+        job = myCursor.fetchOne
+    print(" ")
+    myCursor.execute("SELECT * from certification")
+    cert = myCursor.fetchone()
+    print("The following certificates exist in the database:")
+    while cert is not None:
+        print(cert)
+        cert = myCursor.fetchOne
+    print(" ")
+    addToJob = input("Please provide the job.id you would like to add a certification to")
+    addCert = input("What certification (cert.id) would you like to add to this job?")
+    query = "INSERT INTO job_certs (job_id, cert_id) VALUES (%s, %s)"
+    myCursor.execute(query, (addToJob, addCert)))
+
+
+def removeCert()
+    myCursor.execute("SELECT job.id, job.title, certificate.id, certification.name FROM job_certs JOIN job ON job_certs.job_id=job.id JOIN certification ON job_certs.cert_id=certification.id")
+
 
 menuText = """Please select one of the following options:
 1) Print jobs
@@ -81,3 +107,7 @@ if __name__ == "__main__":
             printCertsForJob()
         elif menuOption == "4":
             printJobsWithCert()
+        elif menuOption == "5":
+            addCert()
+        elif menuOption == "6":
+            removeCert()
