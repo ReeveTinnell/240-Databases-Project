@@ -43,16 +43,33 @@ def getTables():
         myResult = myResult.strip()
         tables.append(myResult)
         myResult = myCursor.fetchone()
-    return myResult
+    return tables
     connection.close()
 
 def showAll():
     number=1
+    tables = []
     tables = getTables()
     for table in tables:
         print(f"{number}. {table}")
         number=number+1
     print("")
+
+def showTable():
+    showAll()
+    tableSelection = input("Select a table to view")
+    tables = getTables()
+    tableOption = tables[tableSection - 1] 
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute("SELECT * FROM %s", (tableOption))
+    myResult = myCursor.fetchone()
+    print(f"In the {tableOption} table, we have the following items: ")
+    while myResult is not None:
+        print(myResult)
+        myResult = myCursor.fetchone()
+    connection.close()
+    print()
 
 
 menuText = """Please select one of the following options:
@@ -65,7 +82,6 @@ q) Quit
 """
 
 if __name__ == "__main__":
-    getTables()
     menuOption = "1"
     while menuOption != 'q':
         menuOption = input(menuText)
