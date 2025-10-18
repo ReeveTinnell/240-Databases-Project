@@ -18,7 +18,7 @@ def getConnection():
 getAttributes fuction takes a table and returns the attributes (columns) of a table. 
 """
 def getAttributes(table):
-    myResult = []
+    attributes = []
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute("DESCRIBE %s", (table))
@@ -26,14 +26,14 @@ def getAttributes(table):
     while myResult is not None:
         myResult = ' '.join(myResult)
         myResult = myResult.strip()
-        tables.append(myResult)
+        attributes.append(myResult)
         myResult = myCursor.fetchone()
-    return myResult
+    return attributes
     connection.close()
 
 
 def getTables():
-    myResult = []
+    tables = []
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute("SHOW TABLES")
@@ -50,7 +50,7 @@ def showAll():
     number=1
     tables = getTables()
     for table in tables:
-        print(f"{number}\) {table}")
+        print(f"{number}. {table}")
         number=number+1
     print("")
 
