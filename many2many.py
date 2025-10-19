@@ -98,8 +98,8 @@ menuText = """Please select one of the following options:
 2) Print certifications
 3) Print certifications for a job
 4) Print jobs which require a certification
-5) Add a certification to a job (unimplemented)
-6) Remove a certification from a job (unimplemented)
+5) Add a certification to a job
+6) Remove a certification from a job
 q) Quit
 """
 
