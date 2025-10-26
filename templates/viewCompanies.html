@@ -1,0 +1,30 @@
+{% include "header.html" %}
+
+<body>
+    <h3>Current Company Table</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Industry</th>
+                <th>Location</th>
+                <th>Size</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for company in companies %}
+            <tr>
+                <td>{{ company.name }}</td>
+                <td>{{ company.industry }}</td>
+                <td>{{ company.location }}</td>
+                <td>{{ company.size }}</td>
+                <td><a href="{{ company.website }}">{{ company.website }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h3><a href="{{ url_for('addCompany') }}">Add a new Company</a>
+</body>
+
+{% include "footer.html" %}

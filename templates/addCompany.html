@@ -1,0 +1,32 @@
+{% include "header.html" %}
+
+<body>
+  <h3>Add a new company to the database</h3>
+  <form method="GET" action="/addCompanyToList">
+    <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="industry">Industry:</label>
+            <input type="text" id="industry" name="industry">
+        </div>
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location">
+        </div>
+        <div class="form-group">
+            <label for="size">Size:</label>
+            <input type="text" id="size" name="size">
+        </div>
+        <div class="form-group">
+            <label for="website">Website:</label>
+            <input type="text" id="website" name="website">
+        </div>
+        <button type="submit">Add Company</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}

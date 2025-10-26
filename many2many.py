@@ -91,6 +91,18 @@ def removeCert():
     connection.commit()
     connection.close()
 
+def fullJobView():
+    select = ("job.title, company.name, full_time.pay, part_time.wage, contract.pay")
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute(f"\nSELECT {select} FROM job LEFT JOIN full_time ON full_time.id=job.id LEFT JOIN part_time ON part_time.id=job.id LEFT JOIN contract ON contract.id=job.id JOIN company ON company.id=job.company\n")
+    results = myCursor.fetchall()
+    print(select)
+    for row in results:
+        print(row)
+
+
+
 
 
 menuText = """Please select one of the following options:
@@ -100,6 +112,7 @@ menuText = """Please select one of the following options:
 4) Print jobs which require a certification
 5) Add a certification to a job
 6) Remove a certification from a job
+7) A better jobs view (in development)
 q) Quit
 """
 
@@ -119,3 +132,5 @@ if __name__ == "__main__":
             addCert()
         elif menuOption == "6":
             removeCert()
+        elif menuOption == "7":
+            fullJobView()
