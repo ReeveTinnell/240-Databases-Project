@@ -15,16 +15,17 @@
         <tbody>
         {% for company in companies %}
             <tr>
-                <td>{{ company.name }}</td>
-                <td>{{ company.industry }}</td>
-                <td>{{ company.location }}</td>
-                <td>{{ company.size }}</td>
-                <td><a href="{{ company.website }}">{{ company.website }}</a></td>
+                <td>{{ company[1] }}</td>
+                <td>{{ company[2] }}</td>
+                <td>{{ company[3] }}</td>
+                <td>{{ company[4] }}</td>
+                <td>{{ company[5] }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <h3><a href="{{ url_for('addCompany') }}">Add a new Company</a>
+    <h3><a href="{{ url_for('deleteCompany') }}">Delete a Company</a>
 </body>
 
 {% include "footer.html" %}

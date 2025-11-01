@@ -1,22 +1,22 @@
 #! /usr/bin/python3
 
 from flask import Flask, render_template, request, redirect, url_for
+import mysql.connector, os
+from dotenv import load_dotenv
+load_dotenv()
+from menu_testing import *
+
+def getConnection():
+    connection = mysql.connector.connect(
+        host=os.getenv('SQL_HOST'),
+        user=os.getenv('SQL_USER'),
+        password=os.getenv('SQL_PWD'),
+        db=os.getenv('SQL_DB')
+    )
+    return connection
+
 
 app = Flask(__name__)
-
-companies = [
-    {'name': 'Gr8ttek',
-     'industry': 'Service',
-     'location': 'Cheyenne, WY',
-     'size': '11-50',
-     'website': 'https://rksbh.com'
-    },
-    {'name': 'Communication Resources',
-     'industry': 'Service',
-     'location': '5340 Moment Rd, Missoula, MT 59808',
-     'size': '11-50',
-     'website': 'https://communicationres.com'
-    }]
 
 @app.route('/')
 def home():
@@ -33,6 +33,10 @@ def premade():
 
 @app.route('/companies')
 def viewCompanies():
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute(f"SELECT * FROM company")
+    companies = myCursor.fetchall()
     output = render_template('viewCompanies.html', companies=companies)
     return output
 
@@ -44,15 +48,15 @@ def addCompany():
 @app.route('/addCompanyToList', methods=['GET'])
 def addCompanyToList():
 
-    new_company = {
-        'name': request.args.get('name'),
-        'industry': request.args.get('industry'),
-        'location': request.args.get('location'),
-        'size': request.args.get('size'),
-        'website': request.args.get('website')
-        }
-
-    companies.append(new_company)
+    new_company = [
+        request.args.get('name'),
+        request.args.get('industry'),
+        request.args.get('location'),
+        request.args.get('size'),
+        request.args.get('website')
+        ]
+    print(new_company)
+    addTo("company", new_company)
 
     return redirect(url_for('viewCompanies'))
 

@@ -65,20 +65,15 @@ def showTable(table):
     connection.close()
     print("\n")
 
-def addTo():
+def addTo(table, entryValues):
 
     connection = getConnection()
     myCursor = connection.cursor()
-
-    showAll()
-    table = int(input("\n Please enter the number of a table you would like to add to: "))
-    table = selectTable(table)
 
     #grabs the attributes for the selected table
     attributes = getAttributes(table)
 
     #blank lists to generate the strings necesaary for SQL. Using two different lists, might be able to use something more sophisticated, but this works
-    entryValues = []
     entryAttr = []
 
     #grabs user input for each attribute and maps it to the same order as attributes.
@@ -86,8 +81,6 @@ def addTo():
         if row[0] == "id":
             continue
         else:
-            value = input(f"Please enter the value for {table} value {row[0]}: ")
-            entryValues.append(value)
             entryAttr.append(row[0])
 
     #string construction for query statement
@@ -100,15 +93,10 @@ def addTo():
     print("\nYour entry was successfully Added!\n")
     connection.close()
 
-def delFrom():
+def delFrom(table):
     # Takes user input to select a table from the database
     connection = getConnection()
     myCursor = connection.cursor()
-
-    showAll()
-    table = int(input("\n Please enter the number of a table you would like make a deletion from: "))
-    table = selectTable(table)
-    showTable(table)
     deleteRow = int(input("\n Please enter the id of the entry you would like to delete: \n"))
     myCursor.execute(f"DELETE FROM {table} WHERE id={deleteRow}")
     connection.commit()
