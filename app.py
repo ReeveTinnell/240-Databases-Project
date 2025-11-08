@@ -31,6 +31,14 @@ def premade():
     output = render_template('static.html')
     return output
 
+@app.route('/viewTable', methods=['GET'])
+def viewTable():
+
+    table = request.args.get('table')
+
+    output = render_template('viewTable.html', table=table, attributes=attributes)
+    return output
+
 @app.route('/companies')
 def viewCompanies():
     connection = getConnection()
@@ -45,20 +53,71 @@ def addCompany():
     output = render_template('addCompany.html')
     return output
 
-@app.route('/addCompanyToList', methods=['GET'])
+@app.route('/addCompany', methods=['POST'])
 def addCompanyToList():
 
     new_company = [
-        request.args.get('name'),
-        request.args.get('industry'),
-        request.args.get('location'),
-        request.args.get('size'),
-        request.args.get('website')
+        request.form['name'],
+        request.form['industry'],
+        request.form['location'],
+        request.form['size'],
+        request.form['website']
         ]
-    print(new_company)
+
     addTo("company", new_company)
 
     return redirect(url_for('viewCompanies'))
+
+@app.route('/deleteCompany')
+def deleteCompany():
+    output = render_template('deleteCompany.html')
+    return output
+
+@app.route('/deleteCompany', methods=['POST'])
+def deleteCompanyFromTable():
+
+    id = request.form['id']
+    name = request.form['name']
+
+    error = None
+
+    company = getEntry("company", id)
+
+    if len(company) == 0:
+        error="ERROR! No company found, please enter a correct company id"
+        output = render_template('deleteCompany.html', error=error)
+        return output
+    if company[0][1] != name:
+        error="ERROR! Company name does not match company name file"
+        output = render_template('deleteCompany.html', error=error)
+        return output
+    else:
+        delFrom("company", id)
+        return redirect(url_for('viewCompanies'))
+
+@app.route('/updateCompany')
+def updateCompany():
+    output = render_template('updateCompany.html')
+    return output
+
+
+@app.route('/updateCompany', methods=['POST'])
+def updateCompanyEntry():
+
+    id = request.form['id']
+
+    update_values = [
+        request.form['name'],
+        request.form['industry'],
+        request.form['location'],
+        request.form['size'],
+        request.form['website']
+        ]
+
+    updateEntry("company", id, update_values)
+
+    return redirect(url_for('viewCompanies'))
+
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True, host="0.0.0.0")

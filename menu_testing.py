@@ -52,18 +52,25 @@ def showAll():
         number=number+1
     print("\n")
 
-def showTable(table):
+def getTable(table):
 
     connection = getConnection()
     myCursor = connection.cursor()
     myCursor.execute(f"SELECT * FROM {table}")
     results = myCursor.fetchall()
-    print(f"\nIn the {table} table, we have the following items: ")
-    for row in results:
-        print(row)
-
     connection.close()
-    print("\n")
+
+    return results
+
+def getEntry(table, id):
+    connection = getConnection()
+    myCursor = connection.cursor()
+    myCursor.execute(f"SELECT * FROM {table} WHERE id={id}")
+    results = myCursor.fetchall()
+    connection.close()
+    print(results)
+    return results
+
 
 def addTo(table, entryValues):
 
@@ -93,14 +100,13 @@ def addTo(table, entryValues):
     print("\nYour entry was successfully Added!\n")
     connection.close()
 
-def delFrom(table):
-    # Takes user input to select a table from the database
+def delFrom(table, deletion):
+
     connection = getConnection()
     myCursor = connection.cursor()
-    deleteRow = int(input("\n Please enter the id of the entry you would like to delete: \n"))
-    myCursor.execute(f"DELETE FROM {table} WHERE id={deleteRow}")
+
+    myCursor.execute(f"DELETE FROM {table} WHERE id={deletion}")
     connection.commit()
-    print("\nYour entry was successfully deleted!")
     connection.close()
 
 def selectTable(table):
@@ -109,35 +115,40 @@ def selectTable(table):
     return table
 
 
-def updateEntry(table, entry):
+def updateEntry(table, id, updateValues):
 
+    connection = getConnection()
+    myCursor = connection.cursor()
+
+    #grabs the attributes for the selected table
     attributes = getAttributes(table)
 
-    entryValues = []
+    #blank lists to generate the strings necesaary for SQL. Using two different lists, might be able to use something more sophisticated, but this works
     entryAttr = []
 
+    #grabs user input for each attribute and maps it to the same order as attributes.
     for row in attributes:
-       if row[0] == "id":
-           print(f"You are modifying entry id # {entry} in the {table} Table. Proceed with caution")
-           continue
-       else:
-           value = input(f"Please enter the new value for {table} {entry} value {row[0]}: ")
-           entryValues.append(value)
-           entryAttr.append(row[0])
+        if row[0] == "id":
+            continue
+        else:
+            entryAttr.append(row[0])
+
+    print(f"The entyrAttr is: {entryAttr}")
+
+    #string construction for query statement
+    entryString = ', '.join(['%s'] * len(updateValues))
 
     # Construct update Query string
     queryString = []
     index = 0
-    for column in entryValues:
+    for column in updateValues:
         queryString.append(f"{entryAttr[index]} = %s")
         index = index + 1
     queryString = ', '.join(queryString)
     print(queryString)
-    query = f"UPDATE {table} SET {queryString} WHERE id={entry}"
+    query = f"UPDATE {table} SET {queryString} WHERE id={id}"
     print(query)
-    connection = getConnection()
-    myCursor = connection.cursor()
-    myCursor.execute(query, entryValues)
+    myCursor.execute(query, updateValues)
     connection.commit()
     connection.close()
 
