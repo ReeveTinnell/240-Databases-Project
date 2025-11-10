@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>From ER to HTTP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+      {% if error %}
+    <p class="alert alert-danger col-sm-4" role="danger">
+      <strong>Error:</strong> {{ error }}
+    </p>
+    {% endif %}
+
+  <header>
+    <h1>From ER to HTTP</h1>
+
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a> |
+      <a href="{{ url_for('viewCompanies') }}">View Companies</a> |
+      <a href="{{ url_for('addCompany') }}">Add a Company</a> |
+      <a href="{{ url_for('deleteCompany') }}">Delete a Company</a> |
+      <a href="{{ url_for('updateCompany') }}">Update a Company</a> |
+      <a href="{{ url_for('about') }}">About</a> |
+    </nav>
+    <hr>
+  </header>

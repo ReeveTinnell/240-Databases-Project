@@ -1,0 +1,37 @@
+{% include "header.html" %}
+
+<body>
+  <h3> Update a company in the database</h3>
+
+  <form method="POST" action="/updateCompany">
+        <div class="form-group">
+            <label for="id">Company id:</label>
+            <input type="text" id="id" name="id" required>
+        </div>
+        <div class="form-group">
+            <label for="name">New Company Name:</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="industry">New Industry:</label>
+            <input type="text" id="industry" name="industry">
+        </div>
+        <div class="form-group">
+            <label for="location">New Location:</label>
+            <input type="text" id="location" name="location">
+        </div>
+        <div class="form-group">
+            <label for="size">New Size:</label>
+            <input type="text" id="size" name="size">
+        </div>
+        <div class="form-group">
+            <label for="website">New Website:</label>
+            <input type="text" id="website" name="website">
+        </div>
+        <button type="submit">Update Company</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}
