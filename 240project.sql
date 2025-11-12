@@ -16,13 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `certification`
+-- Table structure for table `cert`
 --
 
-DROP TABLE IF EXISTS `certification`;
+DROP TABLE IF EXISTS `cert`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `certification` (
+CREATE TABLE `cert` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(25) DEFAULT NULL,
   `cert_body` text,
@@ -34,13 +34,13 @@ CREATE TABLE `certification` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `certification`
+-- Dumping data for table `cert`
 --
 
-LOCK TABLES `certification` WRITE;
-/*!40000 ALTER TABLE `certification` DISABLE KEYS */;
-INSERT INTO `certification` VALUES (1,'Security+','CompTIA',425.00,'Exam'),(2,'Network+','CompTIA',390.00,'Exam'),(3,'A+','CompTIA',265.00,'Exam'),(4,'CAMP','IAITAM',2400.00,'Course and Exam'),(5,'CHAMP','IAITAM',2400.00,'Course and Exam'),(6,'CITAM','IAITAM',4200.00,'Course and Exam');
-/*!40000 ALTER TABLE `certification` ENABLE KEYS */;
+LOCK TABLES `cert` WRITE;
+/*!40000 ALTER TABLE `cert` DISABLE KEYS */;
+INSERT INTO `cert` VALUES (1,'Security+','CompTIA',425.00,'Exam'),(2,'Network+','CompTIA',390.00,'Exam'),(3,'A+','CompTIA',265.00,'Exam'),(4,'CAMP','IAITAM',2400.00,'Course and Exam'),(5,'CHAMP','IAITAM',2400.00,'Course and Exam'),(6,'CITAM','IAITAM',4200.00,'Course and Exam');
+/*!40000 ALTER TABLE `cert` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -53,13 +53,13 @@ DROP TABLE IF EXISTS `company`;
 CREATE TABLE `company` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `industry` text,
+  `industry` varchar(20) DEFAULT NULL,
   `location` text,
   `size` varchar(10) DEFAULT NULL,
   `website` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,7 +85,7 @@ CREATE TABLE `contact` (
   `phone` varchar(14) DEFAULT NULL,
   `name` text,
   `position` text,
-  `company` int DEFAULT NULL,
+  `company` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone` (`phone`),
@@ -140,7 +140,7 @@ DROP TABLE IF EXISTS `full_time`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `full_time` (
   `id` int DEFAULT NULL,
-  `pay` int DEFAULT NULL,
+  `hourly` decimal(4,2) DEFAULT NULL,
   `benefits` text,
   `schedule` text,
   KEY `id` (`id`),
@@ -154,7 +154,7 @@ CREATE TABLE `full_time` (
 
 LOCK TABLES `full_time` WRITE;
 /*!40000 ALTER TABLE `full_time` DISABLE KEYS */;
-INSERT INTO `full_time` VALUES (2,25,NULL,NULL),(3,20,'Health, Vision, Retirement, Dental, Dog-Friendly','Flexibile'),(4,25,NULL,NULL);
+INSERT INTO `full_time` VALUES (2,25.00,NULL,NULL),(3,20.00,'Health, Vision, Retirement, Dental, Dog-Friendly','Flexibile'),(4,25.00,NULL,NULL);
 /*!40000 ALTER TABLE `full_time` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +180,7 @@ CREATE TABLE `job` (
   KEY `fk_job_contact` (`contact`),
   CONSTRAINT `fk_job_company` FOREIGN KEY (`company`) REFERENCES `company` (`id`),
   CONSTRAINT `fk_job_contact` FOREIGN KEY (`contact`) REFERENCES `contact` (`id`),
-  CONSTRAINT `fk_job_role` FOREIGN KEY (`role`) REFERENCES `job_role` (`id`)
+  CONSTRAINT `fk_job_role` FOREIGN KEY (`role`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,57 +195,30 @@ INSERT INTO `job` VALUES (1,'IT Field Support Technician',NULL,NULL,'https://www
 UNLOCK TABLES;
 
 --
--- Table structure for table `job_certs`
+-- Table structure for table `job_cert`
 --
 
-DROP TABLE IF EXISTS `job_certs`;
+DROP TABLE IF EXISTS `job_cert`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `job_certs` (
-  `job_id` int DEFAULT NULL,
-  `cert_id` int DEFAULT NULL,
-  KEY `job_id` (`job_id`),
-  KEY `cert_id` (`cert_id`),
-  CONSTRAINT `job_certs_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`),
-  CONSTRAINT `job_certs_ibfk_2` FOREIGN KEY (`cert_id`) REFERENCES `certification` (`id`)
+CREATE TABLE `job_cert` (
+  `job` int DEFAULT NULL,
+  `cert` int DEFAULT NULL,
+  KEY `job_id` (`job`),
+  KEY `cert_id` (`cert`),
+  CONSTRAINT `job_cert_ibfk_1` FOREIGN KEY (`job`) REFERENCES `job` (`id`),
+  CONSTRAINT `job_cert_ibfk_2` FOREIGN KEY (`cert`) REFERENCES `cert` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `job_certs`
+-- Dumping data for table `job_cert`
 --
 
-LOCK TABLES `job_certs` WRITE;
-/*!40000 ALTER TABLE `job_certs` DISABLE KEYS */;
-INSERT INTO `job_certs` VALUES (4,4),(4,5),(4,6);
-/*!40000 ALTER TABLE `job_certs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `job_role`
---
-
-DROP TABLE IF EXISTS `job_role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `job_role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(50) DEFAULT NULL,
-  `avg_wage` decimal(5,2) DEFAULT NULL,
-  `description` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `title` (`title`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `job_role`
---
-
-LOCK TABLES `job_role` WRITE;
-/*!40000 ALTER TABLE `job_role` DISABLE KEYS */;
-INSERT INTO `job_role` VALUES (1,'Computer Support Specialist',29.59,'Computer and information systems managers, often called information technology (IT) managers, plan, coordinate, and direct computer-related activities in an organization. They help determine the IT goals of an organization and are responsible for implementing computer systems to meet those goals.'),(2,'Computer and Information System Managers',82.31,'Computer and information systems managers, often called information technology (IT) managers, plan, coordinate, and direct computer-related activities in an organization. They help determine the IT goals of an organization and are responsible for implementing computer systems to meet those goals.'),(3,'Network and Computer Systems Administrators',46.54,'Network and computer systems administrators install, configure, and maintain organizations’ local area networks (LANs), wide area networks (WANs), data communication networks, operating systems, and servers.');
-/*!40000 ALTER TABLE `job_role` ENABLE KEYS */;
+LOCK TABLES `job_cert` WRITE;
+/*!40000 ALTER TABLE `job_cert` DISABLE KEYS */;
+INSERT INTO `job_cert` VALUES (4,4),(4,5),(4,6);
+/*!40000 ALTER TABLE `job_cert` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -257,7 +230,7 @@ DROP TABLE IF EXISTS `part_time`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `part_time` (
   `id` int DEFAULT NULL,
-  `wage` int DEFAULT NULL,
+  `hourly` decimal(4,2) DEFAULT NULL,
   `schedule` text,
   KEY `id` (`id`),
   CONSTRAINT `part_time_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`)
@@ -270,8 +243,36 @@ CREATE TABLE `part_time` (
 
 LOCK TABLES `part_time` WRITE;
 /*!40000 ALTER TABLE `part_time` DISABLE KEYS */;
-INSERT INTO `part_time` VALUES (1,40,'On call?');
+INSERT INTO `part_time` VALUES (1,40.00,'On call?');
 /*!40000 ALTER TABLE `part_time` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) NOT NULL,
+  `avg_wage` decimal(5,2) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `title` (`title`),
+  UNIQUE KEY `title_2` (`title`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'Computer Support Specialist',29.59,'Computer and information systems managers, often called information technology (IT) managers, plan, coordinate, and direct computer-related activities in an organization. They help determine the IT goals of an organization and are responsible for implementing computer systems to meet those goals.'),(2,'Computer and Information System Managers',82.31,'Computer and information systems managers, often called information technology (IT) managers, plan, coordinate, and direct computer-related activities in an organization. They help determine the IT goals of an organization and are responsible for implementing computer systems to meet those goals.'),(3,'Network and Computer Systems Administrators',46.54,'Network and computer systems administrators install, configure, and maintain organizations’ local area networks (LANs), wide area networks (WANs), data communication networks, operating systems, and servers.');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -283,4 +284,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-28 16:54:40
+-- Dump completed on 2025-11-12  0:58:20
