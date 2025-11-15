@@ -1,0 +1,39 @@
+{% include "header.html" %}
+
+<body>
+    <h3>Job postings overview</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Hyperlink</th>
+                <th>Job Type</th>
+                <th>Certifications</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for job in jobs %}
+            <tr>
+                <td>{{ job.title }}</td>
+                <td>{{ job.company.name }}</td>
+                <td>{{ job.contact.phone }} / {{ job.contact.email }}</td>
+                <td><a href=""{{ job.hyperlink }}">{{job.hyperlink}}</a></td>
+                <td>{{ job.type }}</td>
+                <td>
+                {% for cert in job.certs %}
+                <a href="cert/{{cert.id}}">{{cert.name}}</a>
+                {% endfor %}
+                </td>
+                <td><a href="job/{{job.id}}">Detailed View</a></td>
+                <td>  <a href="deleteForm?id={{job.id}}">Delete</a>,
+    <a href="updateCompanyForm?id={{job.id}}">Update</a> </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+
+{% include "footer.html" %}

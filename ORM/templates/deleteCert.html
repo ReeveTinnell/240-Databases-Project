@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+<body>
+  <h3>Delete a Certification</h3>
+
+  <form method="POST" action="/deleteCert">
+        <input type="hidden" name="id" value="{{ id }}" />
+        <div class="form-group">
+            <label for="name">Please verify the name of the Certification you would like to delete:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <button type="submit">Delete Certification</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}

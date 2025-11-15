@@ -3,11 +3,29 @@
 <body>
   <h3> Update a company in the database</h3>
 
+   <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Industry</th>
+                <th>Location</th>
+                <th>Size</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ company.name }}</td>
+                <td>{{ company.industry }}</td>
+                <td>{{ company.location }}</td>
+                <td>{{ company.size }}</td>
+                <td>{{ company.website }}</td>
+            </tr>
+        </tbody>
+    </table>
+  
   <form method="POST" action="/updateCompany">
-        <div class="form-group">
-            <label for="id">Company id:</label>
-            <input type="text" id="id" name="id" required>
-        </div>
+        <input type="hidden" name ="id" value="{{company.id}}" />
         <div class="form-group">
             <label for="name">New Company Name:</label>
             <input type="text" id="name" name="name">

@@ -11,6 +11,11 @@ class Cert(db.Model):
     cert_body = db.Column(db.Text, nullable=False)
     cost = db.Column(db.Numeric(6,2), nullable=True)
     requirements = db.Column(db.Text, nullable=True)
+    link = db.Column(db.Text, nullable=True)
+
+    jobs = db.relationship('Job', secondary='job_cert', backref='cert')
+
+
 
 class Company(db.Model):
     # Connecting class to database table name
@@ -33,7 +38,7 @@ class Contact(db.Model):
     phone = db.Column(db.String(14), unique=True, nullable=True)
     name = db.Column(db.Text, nullable=True)
     position = db.Column(db.Text, nullable=True)
-    compnay = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
+    company = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
     
 class Contract(db.Model):
     # Connecting class to database table name
@@ -60,6 +65,7 @@ class Pt(db.Model):
     id = db.Column(db.Integer, db.ForeignKey("job.id"), primary_key=True, autoincrement=True)
     hourly =  db.Column(db.Numeric(4, 2), nullable=True)
     schedule =  db.Column(db.Text, nullable=True)
+    weeklyHours = db.Column(db.Integer, nullable=True)
 
 class Job(db.Model):
     # Connecting class to database table name
@@ -70,9 +76,35 @@ class Job(db.Model):
     post_date = db.Column(db.Date, nullable=True)
     close_date = db.Column(db.Date, nullable=True)
     hyperlink = db.Column(db.Text, nullable=True)
-    company = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
-    role = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=True)
-    contact = db.Column(db.Integer, db.ForeignKey('contact.id'), nullable=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=True)
+    contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'), nullable=True)
+
+    # Relationships
+    company = db.relationship('Company', backref='job')
+    role = db.relationship('Role', backref='job')
+    contact = db.relationship('Contact', backref='job')
+
+    # Subtypes
+
+    ft = db.relationship('Ft', backref='job', uselist=False)
+    pt = db.relationship('Pt', backref='job', uselist=False)
+    contract = db.relationship('Contract', backref='job', uselist=False)
+
+    @property
+    def type(self):
+        """Returns the job type details"""
+        if self.ft:
+            return("Full Time")
+        elif self.pt:
+            return("Part Time")
+        elif self.contract:
+            return("Contract")
+        return None
+
+    certs = db.relationship('Cert', secondary='job_cert', backref='job')
+
+
     
 class JobCert(db.Model):
     # Connecting class to database table name

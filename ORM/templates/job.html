@@ -1,0 +1,60 @@
+{% include "header.html" %}
+
+<h1 class="center-header">{{job.title}} with {{job.company.name}}</h1>
+
+{% if job.ft %}
+    <h2 class="center-header">Full Time Position</h2>
+    <ol>
+        <li><strong>Contact:</strong> {{ job.contact.phone if job.contact else 'N/A' }} / {{ job.contact.email if job.contact else 'N/A' }}</li>
+        <li><strong>Hyperlink:</strong> <a href="{{ job.hyperlink }}">{{ job.hyperlink }}</a></li>
+        <li><strong>Posted:</strong> {{ job.post_date }}</li>
+        <li><strong>Closes:</strong> {{ job.close_date }}</li>
+        <li><strong>Hourly:</strong> {{ job.ft.hourly }}</li>
+        <li><strong>Schedule:</strong> {{ job.ft.schedule }}</li>
+        <li><strong>Benefits:</strong> {{ job.ft.benefits }}</li>
+
+{% elif job.pt %}
+    <h2 class="center-header">Part Time Position</h2>
+    <ol>
+        <li><strong>Contact:</strong> {{ job.contact.phone if job.contact else 'N/A' }} / {{ job.contact.email if job.contact else 'N/A' }}</li>
+        <li><strong>Hyperlink:</strong> <a href="{{ job.hyperlink }}">{{ job.hyperlink }}</a></li>
+        <li><strong>Posted:</strong> {{ job.post_date }}</li>
+        <li><strong>Closes:</strong> {{ job.close_date }}</li>
+        <li><strong>Hourly:</strong> {{ job.pt.hourly }}</li>
+        <li><strong>Schedule:</strong> {{ job.pt.schedule }}</li>
+        <li><strong>Hours per Week:</strong> {{ job.pt.weeklyHours }}</li>
+
+
+{% elif job.contract %}
+    <h2 class="center-header">Contract</h2>
+    <ol>
+        <li><strong>Contact:</strong> {{ job.contact.phone if job.contact else 'N/A' }} / {{ job.contact.email if job.contact else 'N/A' }}</li>
+        <li><strong>Hyperlink:</strong> <a href="{{ job.hyperlink }}">{{ job.hyperlink }}</a></li>
+        <li><strong>Posted:</strong> {{ job.post_date }}</li>
+        <li><strong>Closes:</strong> {{ job.close_date }}</li>
+        <li><strong>Pay:</strong> {{ job.contract.pay }}</li>
+        <li><strong>Schedule:</strong> {{ job.contract.schedule }}</li>
+        <li><strong>Terms:</strong> {{ job.contract.terms }}</li>
+
+{% endif %}
+     <li>
+    <strong>Certifications:</strong>
+    {% if job.certs %}
+        {% for cert in job.certs %}
+            <a href="/cert/{{ cert.id }}" style="margin-right: 10px;">{{ cert.name }}</a>     ( <a href="/delJobCert/{{ job.id }}/{{ cert.id }}">delete</a> ) {% if not loop.last %} | {% endif %}
+        {% endfor %}
+    {% else %}
+        <em>None</em>
+    {% endif %}
+    <br>
+    <a href="/addJobCertForm/{{ job.id }}" style="color: green; margin-top: 5px; display: inline-block;">+ Add Certification</a>
+</li>
+</li>
+    </ol>
+    <p>
+        <a href="deleteJobForm/{{job.id}}">Delete</a>,
+        <a href="updateJobForm/{{job.id}}">Update</a>
+    </p>
+</body>
+
+{% include "footer.html" %}

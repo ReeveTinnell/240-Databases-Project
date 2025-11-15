@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+<h1 class="center-header">Add a Certification for {{job.title}} with {{job.company.name}}</h1>
+
+  <ol>
+  {% for cert in certs %}
+    {% if cert not in job.certs %}
+    <li><a href="/addJobCert/{{ job.id }}/{{ cert.id }}">Add {{ cert.name }}</a></li>
+    {% endif %}
+  {% endfor %}
+  </ol>
+
+<h3> Can find what you're looking for? <a href="/addCert">Add a certification here</a></h3>
+
+
+</body>
+
+{% include "footer.html" %}

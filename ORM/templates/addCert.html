@@ -1,0 +1,34 @@
+{% include "header.html" %}
+<body>
+
+  <h3>Add a new company to the database</h3>
+  <form method="POST" action="/addCert">
+    <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="cert_body">Certifying Body:</label>
+            <input type="text" id="cert_body" name="cert_body">
+        </div>
+        <div class="form-group">
+            <label for="cost">Cost:</label>
+            <input type="text" id="cost" name="cost">
+        </div>
+        <div class="form-group">
+            <label for="requirements">Requirements:</label>
+            <input type="text" id="requirements" name="requirements">
+        </div>
+        <div class="form-group">
+            <label for="link">Link:</label>
+            <input type="text" id="link" name="link">
+        </div>
+        <button type="submit">Add Certification</button>
+    </form>
+
+</body>
+
+
+</body>
+
+{% include "footer.html" %}

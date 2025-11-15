@@ -1,0 +1,33 @@
+{% include "header.html" %}
+
+<body>
+    <h3>Certifications in the database</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Certifying Body</th>
+                <th>Cost</th>
+                <th>Requirements</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cert in certs %}
+            <tr>
+                <td><a href="/cert/{{ cert.id }}">{{ cert.name }}</a></td>
+                <td>{{ cert.cert_body }}</td>
+                <td>{{ cert.cost }}</td>
+                <td>{{ cert.requirements }}</td>
+                <td>{{ cert.link }}</td>
+                <td>  <a href="deleteCert/{{cert.id}}">Delete</a>,
+    <a href="updateCertForm/{{cert.id}}">Update</a> </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h3><a href="{{ url_for('addCertForm') }}">Add a certification</a></h3>
+   
+</body>
+
+{% include "footer.html" %}

@@ -1,0 +1,15 @@
+{% include "header.html" %}
+
+<h1 class="center-header">{{cert.name}} from {{cert.cert_body}}</h1>
+
+    <ol>
+        <li><strong>Cost:</strong> {{ cert.cost }} </li>
+        <li><strong>Requirements:</strong> {{cert.requirements }}</a></li>
+        <li><strong>Required for Jobs:</strong> {% for job in cert.jobs %}
+                   <a href="/job/{{ job.id }}">{{ job.title }}</a> {% if not loop.last %}<br>{% endif %}
+        {% endfor %}
+        </li>
+
+</body>
+
+{% include "footer.html" %}
