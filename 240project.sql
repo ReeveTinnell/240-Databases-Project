@@ -28,9 +28,10 @@ CREATE TABLE `cert` (
   `cert_body` text,
   `cost` decimal(6,2) DEFAULT NULL,
   `requirements` text,
+  `link` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +40,7 @@ CREATE TABLE `cert` (
 
 LOCK TABLES `cert` WRITE;
 /*!40000 ALTER TABLE `cert` DISABLE KEYS */;
-INSERT INTO `cert` VALUES (1,'Security+','CompTIA',425.00,'Exam'),(2,'Network+','CompTIA',390.00,'Exam'),(3,'A+','CompTIA',265.00,'Exam'),(4,'CAMP','IAITAM',2400.00,'Course and Exam'),(5,'CHAMP','IAITAM',2400.00,'Course and Exam'),(6,'CITAM','IAITAM',4200.00,'Course and Exam');
+INSERT INTO `cert` VALUES (1,'Security+','CompTIA',425.00,'Exam',NULL),(2,'Network+','CompTIA',390.00,'Exam',NULL),(3,'A+','CompTIA',265.00,'Exam',NULL),(4,'CAMP','IAITAM',2400.00,'Course and Exam',NULL),(5,'CHAMP','IAITAM',2400.00,'Course and Exam',NULL),(6,'CITAM','IAITAM',4200.00,'Course and Exam',NULL);
 /*!40000 ALTER TABLE `cert` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +60,7 @@ CREATE TABLE `company` (
   `website` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,8 +118,8 @@ CREATE TABLE `contract` (
   `terms` text,
   `schedule` text,
   `pay` text,
-  KEY `id` (`id`),
-  CONSTRAINT `contract_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`)
+  KEY `fk_contract_job` (`id`),
+  CONSTRAINT `fk_contract_job` FOREIGN KEY (`id`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -144,7 +145,7 @@ CREATE TABLE `full_time` (
   `benefits` text,
   `schedule` text,
   KEY `id` (`id`),
-  CONSTRAINT `full_time_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`)
+  CONSTRAINT `full_time_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -171,17 +172,17 @@ CREATE TABLE `job` (
   `post_date` date DEFAULT NULL,
   `close_date` date DEFAULT NULL,
   `hyperlink` text,
-  `company` int NOT NULL,
-  `role` int DEFAULT NULL,
-  `contact` int DEFAULT NULL,
+  `company_id` int NOT NULL,
+  `role_id` int DEFAULT NULL,
+  `contact_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_job_company` (`company`),
-  KEY `fk_job_role` (`role`),
-  KEY `fk_job_contact` (`contact`),
-  CONSTRAINT `fk_job_company` FOREIGN KEY (`company`) REFERENCES `company` (`id`),
-  CONSTRAINT `fk_job_contact` FOREIGN KEY (`contact`) REFERENCES `contact` (`id`),
-  CONSTRAINT `fk_job_role` FOREIGN KEY (`role`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_job_role` (`role_id`),
+  KEY `fk_job_contact` (`contact_id`),
+  KEY `fk_job_company` (`company_id`),
+  CONSTRAINT `fk_job_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_job_contact` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
+  CONSTRAINT `fk_job_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,10 +205,10 @@ DROP TABLE IF EXISTS `job_cert`;
 CREATE TABLE `job_cert` (
   `job` int DEFAULT NULL,
   `cert` int DEFAULT NULL,
-  KEY `job_id` (`job`),
-  KEY `cert_id` (`cert`),
-  CONSTRAINT `job_cert_ibfk_1` FOREIGN KEY (`job`) REFERENCES `job` (`id`),
-  CONSTRAINT `job_cert_ibfk_2` FOREIGN KEY (`cert`) REFERENCES `cert` (`id`)
+  KEY `fk_job_cert_job` (`job`),
+  KEY `fk_job_cert_cert` (`cert`),
+  CONSTRAINT `fk_job_cert_cert` FOREIGN KEY (`cert`) REFERENCES `cert` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_job_cert_job` FOREIGN KEY (`job`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,8 +233,9 @@ CREATE TABLE `part_time` (
   `id` int DEFAULT NULL,
   `hourly` decimal(4,2) DEFAULT NULL,
   `schedule` text,
+  `weeklyHours` int DEFAULT NULL,
   KEY `id` (`id`),
-  CONSTRAINT `part_time_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`)
+  CONSTRAINT `part_time_ibfk_1` FOREIGN KEY (`id`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -243,7 +245,7 @@ CREATE TABLE `part_time` (
 
 LOCK TABLES `part_time` WRITE;
 /*!40000 ALTER TABLE `part_time` DISABLE KEYS */;
-INSERT INTO `part_time` VALUES (1,40.00,'On call?');
+INSERT INTO `part_time` VALUES (1,40.00,'On call?',0);
 /*!40000 ALTER TABLE `part_time` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,4 +286,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-12  0:58:20
+-- Dump completed on 2025-11-16 23:30:09
