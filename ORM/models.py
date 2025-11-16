@@ -13,7 +13,7 @@ class Cert(db.Model):
     requirements = db.Column(db.Text, nullable=True)
     link = db.Column(db.Text, nullable=True)
 
-    jobs = db.relationship('Job', secondary='job_cert', backref='cert')
+    jobs = db.relationship('Job', secondary='job_cert', viewonly='true')
 
 
 
@@ -44,7 +44,7 @@ class Contract(db.Model):
     # Connecting class to database table name
     __tablename__ = 'contract'
 
-    id = db.Column(db.Integer, db.ForeignKey("job.id"), primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, db.ForeignKey("job.id", ondelete='CASCADE'), primary_key=True, autoincrement=True)
     terms =  db.Column(db.Text, nullable=True)
     schedule =  db.Column(db.Text, nullable=True)
     pay =  db.Column(db.Text, nullable=True)
@@ -53,7 +53,7 @@ class Ft(db.Model):
     # Connecting class to database table name
     __tablename__ = 'full_time'
     
-    id = db.Column(db.Integer, db.ForeignKey("job.id"), primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, db.ForeignKey("job.id", ondelete='CASCADE'), primary_key=True, autoincrement=True)
     hourly =  db.Column(db.Numeric(4,2), nullable=True)
     schedule =  db.Column(db.Text, nullable=True)
     benefits =  db.Column(db.Text, nullable=True)
@@ -62,7 +62,7 @@ class Pt(db.Model):
     # Connecting class to database table name
     __tablename__ = 'part_time'
 
-    id = db.Column(db.Integer, db.ForeignKey("job.id"), primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, db.ForeignKey("job.id", ondelete='CASCADE'), primary_key=True, autoincrement=True)
     hourly =  db.Column(db.Numeric(4, 2), nullable=True)
     schedule =  db.Column(db.Text, nullable=True)
     weeklyHours = db.Column(db.Integer, nullable=True)
@@ -87,9 +87,9 @@ class Job(db.Model):
 
     # Subtypes
 
-    ft = db.relationship('Ft', backref='job', uselist=False)
-    pt = db.relationship('Pt', backref='job', uselist=False)
-    contract = db.relationship('Contract', backref='job', uselist=False)
+    ft = db.relationship('Ft', backref='job', uselist=False, cascade='all, delete-orphan')
+    pt = db.relationship('Pt', backref='job', uselist=False, cascade='all, delete-orphan')
+    contract = db.relationship('Contract', backref='job', uselist=False, cascade='all, delete-orphan')
 
     @property
     def type(self):
@@ -110,8 +110,12 @@ class JobCert(db.Model):
     # Connecting class to database table name
     __tablename__ = 'job_cert'    
     
-    job = db.Column(db.Integer, db.ForeignKey('job.id'), primary_key=True, nullable=False)
-    cert = db.Column(db.Integer, db.ForeignKey('cert.id'), primary_key=True, nullable=False)
+    job = db.Column(db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, nullable=False)
+    cert = db.Column(db.Integer, db.ForeignKey('cert.id', ondelete='CASCADE'), primary_key=True, nullable=False)
+
+    # relationship
+    jobName = db.relationship('Job', backref='job_cert')
+    certName = db.relationship('Cert', backref='job_cert')
 
 class Role(db.Model):
     # Connecting class to database table name

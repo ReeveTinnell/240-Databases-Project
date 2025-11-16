@@ -3,11 +3,10 @@
 <body>
   <h3>Delete a Certification</h3>
 
-  <form method="POST" action="/deleteCert">
-        <input type="hidden" name="id" value="{{ id }}" />
+  <form method="POST" action="/cert/delete/{{ cert.id }}">
         <div class="form-group">
-            <label for="name">Please verify the name of the Certification you would like to delete:</label>
-            <input type="text" id="name" name="name" required>
+            <label for="confirm">Are you sure you wish to delete {{ cert.name }}?</label>
+            <input type="text" id="confirm" name="confirm" required>
         </div>
         <button type="submit">Delete Certification</button>
     </form>

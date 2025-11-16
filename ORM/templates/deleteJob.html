@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+
+
+<body>
+  <h3>Delete Job</h3>
+  <p>Are you sure you wish to delete <strong>{{ job.title }}</strong>?</p>
+  <form method="POST" action="/job/delete/{{ job.id }}" style="display: inline;">
+    <button type="submit" style="background-color: #dc3545; color: white;">Yes, Delete Job</button>
+  </form>
+  <a href="/job/{{ job.id }}">
+    <button type="button">Cancel</button>
+  </a>
+</body>
+
+
+
+{% include "footer.html" %}

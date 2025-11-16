@@ -16,7 +16,7 @@
         <tbody>
         {% for job in jobs %}
             <tr>
-                <td>{{ job.title }}</td>
+                <td><a href="/job/{{ job.id }}">{{ job.title }}</a></td>
                 <td>{{ job.company.name }}</td>
                 <td>{{ job.contact.phone }} / {{ job.contact.email }}</td>
                 <td><a href=""{{ job.hyperlink }}">{{job.hyperlink}}</a></td>
@@ -26,13 +26,19 @@
                 <a href="cert/{{cert.id}}">{{cert.name}}</a>
                 {% endfor %}
                 </td>
-                <td><a href="job/{{job.id}}">Detailed View</a></td>
-                <td>  <a href="deleteForm?id={{job.id}}">Delete</a>,
-    <a href="updateCompanyForm?id={{job.id}}">Update</a> </td>
+                <td><a href="/job/delete/{{ job.id }}">Delete Job</a></td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+<br>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <p style="font-size: 2.0rem;">
+        <a href='/job/new'>Add a new job</a>
+    </p>
+</div>
+
 
 </body>
 

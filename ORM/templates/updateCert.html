@@ -1,9 +1,10 @@
 {% include "header.html" %}
 <body>
 
-  <h3>Add a new company to the database</h3>
-  <form method="POST" action="/cert/new">
+  <h3>You are updating {{ cert.name }}</h3>
+  <form method="POST" action="/cert/update/{{ cert.id }}">
     <div class="form-group">
+            <input type="hidden" name ="id" value="{{ cert.id }}" />
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
         </div>
@@ -23,7 +24,7 @@
             <label for="link">Link:</label>
             <input type="text" id="link" name="link">
         </div>
-        <button type="submit">Add Certification</button>
+        <button type="submit">Update {{ cert.name }}</button>
     </form>
 
 </body>

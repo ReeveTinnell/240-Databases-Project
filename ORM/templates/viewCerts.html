@@ -20,8 +20,8 @@
                 <td>{{ cert.cost }}</td>
                 <td>{{ cert.requirements }}</td>
                 <td>{{ cert.link }}</td>
-                <td>  <a href="deleteCert/{{cert.id}}">Delete</a>,
-    <a href="updateCertForm/{{cert.id}}">Update</a> </td>
+                <td>  <a href="/cert/delete/{{cert.id}}">Delete</a>,
+    <a href="/cert/update/{{cert.id}}">Update</a> </td>
             </tr>
         {% endfor %}
         </tbody>

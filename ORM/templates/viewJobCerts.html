@@ -1,0 +1,25 @@
+{% include "header.html" %}
+
+<body>
+    <h3>View of the Job Certs table</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Job</th>
+                <th>Certification</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for req in job_certs %}
+            <tr>
+                <td><a href="/job/{{ req.jobName.id }}">{{ req.jobName.title }}</a></td>
+                <td><a href='/cert/{{ req.certName.id }}'>{{ req.certName.name }}</a></td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+</body>
+
+{% include "footer.html" %}
