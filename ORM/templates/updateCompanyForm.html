@@ -24,8 +24,7 @@
         </tbody>
     </table>
   
-  <form method="POST" action="/updateCompany">
-        <input type="hidden" name ="id" value="{{company.id}}" />
+  <form method="POST" action="/company/update/{{ company.id }}">
         <div class="form-group">
             <label for="name">New Company Name:</label>
             <input type="text" id="name" name="name">

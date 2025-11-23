@@ -38,7 +38,9 @@ class Contact(db.Model):
     phone = db.Column(db.String(14), unique=True, nullable=True)
     name = db.Column(db.Text, nullable=True)
     position = db.Column(db.Text, nullable=True)
-    company = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
+    
+    company = db.relationship('Company', backref='contact')
     
 class Contract(db.Model):
     # Connecting class to database table name
@@ -49,6 +51,7 @@ class Contract(db.Model):
     schedule =  db.Column(db.Text, nullable=True)
     pay =  db.Column(db.Text, nullable=True)
     
+    
 class Ft(db.Model):
     # Connecting class to database table name
     __tablename__ = 'full_time'
@@ -58,6 +61,7 @@ class Ft(db.Model):
     schedule =  db.Column(db.Text, nullable=True)
     benefits =  db.Column(db.Text, nullable=True)
     
+    
 class Pt(db.Model):
     # Connecting class to database table name
     __tablename__ = 'part_time'
@@ -66,6 +70,8 @@ class Pt(db.Model):
     hourly =  db.Column(db.Numeric(4, 2), nullable=True)
     schedule =  db.Column(db.Text, nullable=True)
     weeklyHours = db.Column(db.Integer, nullable=True)
+    
+
 
 class Job(db.Model):
     # Connecting class to database table name

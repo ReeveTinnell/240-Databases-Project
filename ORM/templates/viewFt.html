@@ -1,0 +1,28 @@
+{% include "header.html" %}
+
+<body>
+    <h3>Contents of full_time table</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Job</th>
+                <th>Hourly</th>
+                <th>Schedule</th>
+                <th>Benefits</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ft in ftJobs %}
+            <tr>
+                <td><a href='/job/{{ ft.job.id }}'>{{ ft.job.title }}</a></td>
+                <td>{{ ft.hourly }}</td>
+                <td>{{ ft.schedule }}</td>
+                <td>{{ ft.benefits }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+   
+</body>
+
+{% include "footer.html" %}

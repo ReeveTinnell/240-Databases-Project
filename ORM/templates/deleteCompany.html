@@ -1,13 +1,10 @@
 {% include "header.html" %}
 
 <body>
-  <h3>Delete a company</h3>
+  <h3>Deleting a <strong> {{ company.name }} </strong></h3>
 
-  <form method="POST" action="/deleteCompany">
-        <div class="form-group">
-            <label for="id">Company id</label>
-            <input type="text" id="id" name="id" required>
-        </div>
+  <form method="POST" action="/company/delete/{{ company.id }}">
+
         <div class="form-group">
             <label for="name">Company Name:</label>
             <input type="text" id="name" name="name" required>

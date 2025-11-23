@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+<body>
+  <h3>Deleting <strong> {{ contact.name }} @ {{ contact.email }} for {{ contact.company.name }}</strong></h3>
+
+  <form method="POST" action="/contact/delete/{{ contact.id }}">
+
+        <div class="form-group">
+            <label for="email">Confirm contact email:</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+        <button type="submit">Delete company contact</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}

@@ -1,0 +1,33 @@
+{% include "header.html" %}
+
+<body>
+    <h3>Contacts in the database</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Position</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.company.name }}</td>
+                <td>{{ contact.name }}</a></td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.phone }}</td>
+                <td>{{ contact.position }}</td>
+                <td>  <a href="/contact/delete/{{contact.id}}">Delete</a>,
+    <a href="/contact/update/{{contact.id}}">Update</a> </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h3><a href="/contact/new">Add a contact</a></h3>
+   
+</body>
+
+{% include "footer.html" %}

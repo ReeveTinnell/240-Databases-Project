@@ -19,53 +19,22 @@ app.config['SECRET_KEY'] = creds['secret_key']
 
 db.init_app(app)
 
-#               COMPANIES
 
-#   CREATE
-
-@app.route('/api/company', methods=['POST'])
-def create_company():
-    data = request.json
-    new_company = Company(
-        name=data['name'],
-        industry=data.get('industry'),
-        location=data.get('location'),
-        size=data.get('size'),
-        website=data.get('website')
-    )
-    db.session.add(new_company)
-    db.session.commit()
-    return jsonify({'id': new_company.id, 'name': new_company.name})
-
-#   READ
-
-def showCompanies():
-    print("\n")
-    companies = Company.query.all()
-    for company in companies:
-        print(f"[{company.id}] -> {company.name}")
-    print("\n")
 
 @app.route('/')
 def home():
     tables = db.metadata.tables.keys()
     print(tables)
-    return(render_template('home.html'))
+    return(render_template('home.html', tables=tables))
 
 @app.route('/about')
 def about():
     return(render_template('about.html'))
 
-# @app.route('/viewTable', methods=['GET'])
-# def viewTable():
-#     output = render_template('viewTable.html', table=table, attributes=attributes)
-#     return output
-
 #               JOBS
 
 
-#   CREATE - vibe coded
-
+#   CREATE
 @app.route('/job/new', methods=['GET', 'POST'])
 def newJob():
     if request.method == 'POST':
@@ -153,9 +122,92 @@ def job(id):
 #   UPDATE
 @app.route('/job/update/<int:id>', methods =['GET'])
 def updateJobForm(id):
+    job = Job.query.options(
+        joinedload(Job.ft),
+        joinedload(Job.pt),
+        joinedload(Job.contract),
+        joinedload(Job.certs)
+        ).get(id)
+    companies = Company.query.all()
+    roles = Role.query.all()
+    contacts = Contact.query.all()
+    certs = Cert.query.all()
+    return(render_template('updateJob.html', job=job, companies=companies, roles=roles, contacts=contacts, certs=certs))
 
-    job = Job.query.get(id)
-    return(render_template('updateJob.html', job=job))
+
+@app.route('/job/update/<int:id>', methods =['POST'])
+def updateJob(id):
+    job = Job.query.options(
+        joinedload(Job.ft),
+        joinedload(Job.pt),
+        joinedload(Job.contract),
+        joinedload(Job.certs)
+        ).get(id)
+        
+    if job.ft:
+        oldType = 'full_time'
+    elif job.pt:
+        oldType = 'part_time'
+    elif job.contract:
+        oldType = 'contract'
+        
+    job.title = request.form['title'],
+    job.post_date = datetime.strptime(request.form['post_date'], '%Y-%m-%d') if request.form.get('post_date') else None,
+    job.close_date = datetime.strptime(request.form['close_date'], '%Y-%m-%d') if request.form.get('close_date') else None,
+    job.hyperlink = request.form.get('hyperlink'),
+    job.company_id = int(request.form['company_id']),
+    job.role_id = int(request.form['role_id']) if request.form.get('role_id') else None,
+    job.contact_id = int(request.form['contact_id']) if request.form.get('contact_id') else None    
+
+    job_type = request.form['job_type']
+
+    if job_type == oldType:
+        if job_type == 'full_time':
+            ft = Ft.query.get(id)
+            ft.hourly = request.form.get('ft_hourly'),
+            ft.schedule = request.form.get('ft_schedule'),
+            ft.benefits = request.form.get('ft_benefits')
+        elif job_type == 'part_time':
+            pt = Pt.query.get(id)
+            pt.hourly = request.form.get('pt_hourly'),
+            schedule = request.form.get('pt_schedule'),
+            weeklyHours = request.form.get('weeklyHours')
+        elif job_type == 'contract':
+            contract = Contract.query.get(id)
+            contract.terms = request.form.get('terms'),
+            contract.schedule = request.form.get('contract_schedule'),
+            contract.pay = request.form.get('pay')
+    elif job_type != oldType:
+        if oldType.ft:
+            ft = Ft.query.get(id)
+            db.session.delete(ft)
+        elif oldType.pt:
+            pt = Pt.query.get(id)
+            db.session.delete(pt)
+        elif oldType.conract:
+            contract = Contract.query.get(id)
+            db.session.delete(contract)
+
+    
+    # Handle certifications (many-to-many)
+    updateCertIds = request.form.getlist('cert_ids')
+    
+    updateCertIds = [int(cert_id) for cert_id in updateCertIds if cert_id]
+   
+    # Delete any certifcations that are no longer required
+    for cert in job.certs:
+        if cert.id not in updateCertIds:
+            delJobCert = JobCert.query.filter_by(job=id, cert=cert.id).first()
+            db.session.delete(delJobCert)
+    
+    for cert_id in updateCertIds:
+        if not JobCert.query.filter_by(job=id, cert=cert_id).first():
+            newJobCert = JobCert(job=id, cert=cert_id)
+            db.session.add(newJobCert)
+    
+    db.session.commit()
+    return redirect(url_for('job', id=id))
+
 
 #   DELETE
 @app.route('/job/delete/<int:id>', methods=['GET'])
@@ -261,13 +313,13 @@ def deleteCertFromTable(id):
 #             JOB_CERTS
 
 #   Create
-@app.route('/addJobCertForm/<int:id>')
+@app.route('/job_cert/add/<int:id>')
 def addJobCertForm(id):
     job = Job.query.get(id)
     certs = Cert.query.all()
     return(render_template('addJobCertForm.html', job=job, certs=certs))
 
-@app.route('/addJobCert/<int:job>/<int:cert>', methods=['GET'])
+@app.route('/job_cert/add/<int:job>/<int:cert>', methods=['GET'])
 def addJobCert(job, cert):
     new_job_cert = JobCert(job=job, cert=cert)
     db.session.add(new_job_cert)
@@ -276,13 +328,13 @@ def addJobCert(job, cert):
     return(render_template('job.html', job=job))
 
 #   READ
-@app.route('/job_certs')
+@app.route('/job_cert/all')
 def viewJobCerts():
     job_certs = JobCert.query.all()
     return(render_template('viewJobCerts.html', job_certs=job_certs))
 
 #   DELETE
-@app.route('/delJobCert/<int:job>/<int:cert>', methods=['GET'])
+@app.route('/job_cert/delete/<int:job>/<int:cert>', methods=['GET'])
 def defJobCert(job, cert):
 
     del_job_cert = JobCert.query.filter_by(job=job, cert=cert).first()
@@ -296,20 +348,36 @@ def defJobCert(job, cert):
 
 #               COMPANIES
 
+#   CREATE
+
+@app.route('/api/company', methods=['POST'])
+def create_company():
+    data = request.json
+    newCompany = Company(
+        name=data['name'],
+        industry=data.get('industry'),
+        location=data.get('location'),
+        size=data.get('size'),
+        website=data.get('website')
+    )
+    db.session.add(newCompany)
+    db.session.commit()
+    return jsonify({'id': newCompany.id, 'name': newCompany.name})
+
 #   READ
-@app.route('/companies')
+@app.route('/company/all')
 def viewCompanies():
     companies = Company.query.all()
     output = render_template('viewCompanies.html', companies=companies)
     return output
 
 #   CREATE
-@app.route('/addCompany')
+@app.route('/company/new')
 def addCompany():
     output = render_template('addCompany.html')
     return output
 
-@app.route('/addCompany', methods=['POST'])
+@app.route('/company/new', methods=['POST'])
 def addCompanyToList():
 
     new_company = Company(name=request.form['name'], industry=request.form['industry'], location=request.form['location'], size=request.form['size'], website=request.form['website'])
@@ -318,25 +386,21 @@ def addCompanyToList():
 
     return redirect(url_for('viewCompanies'))
 
-@app.route('/deleteCompany')
-def deleteCompany():
-    output = render_template('deleteCompany.html')
-    return output
+@app.route('/company/delete/<int:company>', methods=['GET'])
+def deleteCompany(company):
+    company = Company.query.get(company)
+    print(company)
+    return(render_template('deleteCompany.html', company=company))
+    
+@app.route('/company/delete/<int:company>', methods=['POST'])
+def deleteCompanyFromTable(company):
 
-@app.route('/deleteCompany', methods=['POST'])
-def deleteCompanyFromTable():
-
-    id = request.form['id']
+    company = Company.query.get(company)
+    
     name = request.form['name']
 
     error = None
 
-    company = db.session.get(Company, id)
-
-    if company == None:
-        error="ERROR! No company found, please enter a correct company id"
-        output = render_template('deleteCompany.html', error=error)
-        return output
     if company.name != name:
         error="ERROR! Company name does not match company name file"
         output = render_template('deleteCompany.html', error=error)
@@ -346,19 +410,17 @@ def deleteCompanyFromTable():
         db.session.commit()
         return redirect(url_for('viewCompanies'))
 
-@app.route('/updateCompany')
-def updateCompany():
-    company = Company.query.get(request.args.get("id"))
+@app.route('/company/update/<int:company>')
+def updateCompany(company):
+    company = Company.query.get(company)
     output = render_template('updateCompanyForm.html', company=company)
     return output
 
 
-@app.route('/updateCompany', methods=['POST'])
-def updateCompanyEntry():
-
-    id = request.form['id']
+@app.route('/company/update/<int:company>', methods=['POST'])
+def updateCompanyEntry(company):
     
-    company = db.session.get(Company, id)
+    company = Company.query.get(company)
 
     company.name = request.form['name'],
     company.industry = request.form['industry'],
@@ -373,8 +435,43 @@ def updateCompanyEntry():
 #               CONTACTS
 #   CREATE
 
+@app.route('/contact/all')
+def viewContacts():
+    contacts = Contact.query.all()
+    return(render_template('viewContacts.html', contacts=contacts))
+
+@app.route('/contact/new')
+def newContactForm():
+    companies = Company.query.all()
+    return(render_template('addContact.html', companies=companies))
+
+@app.route('/contact/new', methods=['POST'])
+def newContact():
+    newContact = Contact(
+        name=request.form['name'],
+        email=request.form['email'],
+        phone=request.form['phone'],
+        position=request.form['position'],
+        company_id=int(request.form['company_id'])
+    )
+    db.session.add(newContact)
+    db.session.commit()
+    return redirect(url_for('viewContacts'))
+
+@app.route('/contact/delete/<int:id>', methods=['GET'])
+def deleteContactdForm(id):
+    contact = Contact.query.get(id)
+    return(render_template('deleteContact.html', contact=contact))
+
+@app.route('/contact/delete/<int:id>', methods=['POST'])
+def deleteContact(id):
+    contact = Contact.query.get(id)
+    db.session.delete(contact)
+    db.session.commit()
+    return redirect(url_for('viewContacts'))
+    
 @app.route('/api/contact', methods=['POST'])
-def create_contact():
+def newContactAPI():
     data = request.json
     new_contact = Contact(
         name=data.get('name'),
@@ -387,21 +484,73 @@ def create_contact():
     db.session.commit()
     return jsonify({'id': new_contact.id, 'name': new_contact.name})
 
+@app.route('/contact/update/<int:id>')
+def updateContactForm(id):
+    contact = Contact.query.get(id)
+    companies = Company.query.all()
+    return(render_template('updateContactForm.html', contact=contact, companies=companies))
+
+@app.route('/contact/update/<int:id>', methods=['POST'])
+def updateContact(id):
+    contact = Contact.query.get(id)
+    
+    contact.company_id = request.form['company_id']
+    contact.name = request.form['name']
+    contact.email = request.form['email']
+    contact.phone = request.form['phone']
+    contact.position = request.form['position']
+    
+    db.session.commit()
+    
+    return redirect(url_for('viewContacts'))
+
+
+@app.route('/contract/all')
+def viewContracts():
+    contracts = Contract.query.all()
+    return(render_template('viewContracts.html', contracts=contracts))
+    
+@app.route('/full_time/all')
+def viewFt():
+    ftJobs = Ft.query.all()
+    return(render_template('viewFt.html', ftJobs=ftJobs))
+
+@app.route('/part_time/all')
+def viewPt():
+    ptJobs = Pt.query.all()
+    return(render_template('viewPt.html', ptJobs=ptJobs))
 
 #               ROLES
 #   CREATE
 @app.route('/api/role', methods=['POST'])
-def create_role():
+def createRole():
     data = request.json
-    new_role = Role(
+    newRole = Role(
         title=data['title'],
         avg_wage=data.get('avg_wage'),
         description=data.get('description')
     )
-    db.session.add(new_role)
+    db.session.add(newRole)
     db.session.commit()
-    return jsonify({'id': new_role.id, 'title': new_role.title})
+    return jsonify({'id': newRole.id, 'title': newRole.title})
 
+@app.route('/role/all')
+def viewRoles():
+    roles = Role.query.all()
+    return(render_template('viewRoles.html', roles=roles))
+    
+@app.route('/role/new')
+def newRoleForm():
+    return(render_template('addRole.html'))
+    
+@app.route('/role/new', methods=['POST'])
+def newRole():
+    
+    newRole = Role(title=request.form['name'], avg_wage=reqest.form['avg_wage'], description=request.form['description'])
+    db.session.add(newRole)
+    db.sesssion.commit()
+    
+    return redirect(url_for('viewRoles'))
 
 
 if __name__ == '__main__':

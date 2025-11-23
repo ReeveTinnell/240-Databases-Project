@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.43, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.44, for Linux (x86_64)
 --
 -- Host: localhost    Database: project
 -- ------------------------------------------------------
--- Server version	8.0.43-0ubuntu0.24.04.1
+-- Server version	8.0.44-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -60,7 +60,7 @@ CREATE TABLE `company` (
   `website` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,13 +86,13 @@ CREATE TABLE `contact` (
   `phone` varchar(14) DEFAULT NULL,
   `name` text,
   `position` text,
-  `company` int NOT NULL,
+  `company_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone` (`phone`),
   UNIQUE KEY `email_2` (`email`),
-  KEY `company` (`company`),
-  CONSTRAINT `contact_ibfk_1` FOREIGN KEY (`company`) REFERENCES `company` (`id`)
+  KEY `company` (`company_id`),
+  CONSTRAINT `contact_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -129,6 +129,7 @@ CREATE TABLE `contract` (
 
 LOCK TABLES `contract` WRITE;
 /*!40000 ALTER TABLE `contract` DISABLE KEYS */;
+INSERT INTO `contract` VALUES (14,'none','tes','$50/call + $30/hr');
 /*!40000 ALTER TABLE `contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -182,7 +183,7 @@ CREATE TABLE `job` (
   CONSTRAINT `fk_job_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_job_contact` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
   CONSTRAINT `fk_job_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,7 +192,7 @@ CREATE TABLE `job` (
 
 LOCK TABLES `job` WRITE;
 /*!40000 ALTER TABLE `job` DISABLE KEYS */;
-INSERT INTO `job` VALUES (1,'IT Field Support Technician',NULL,NULL,'https://www.indeed.com/viewjob?jk=a8a0cd53e59070b2&tk=1j5uqq318gooq8bg&from=serp&vjs=3',1,1,1),(2,'IT Help Desk – Tier 2',NULL,NULL,'https://communicationresources.bamboohr.com/careers/61',2,1,2),(3,'IT Technician',NULL,NULL,'https://www.indeed.com/viewjob?jk=b287a4df7f7c7e71&tk=1j5uqq318gooq8bg&from=serp&vjs=3',3,1,3),(4,'CRP Hardware Asset Manager',NULL,NULL,'https://www.indeed.com/viewjob?jk=093eb526c87964ed&tk=1j5uqq318gooq8bg&from=serp&vjs=3',4,2,NULL);
+INSERT INTO `job` VALUES (1,'IT Field Support Technician',NULL,NULL,'https://www.indeed.com/viewjob?jk=a8a0cd53e59070b2&tk=1j5uqq318gooq8bg&from=serp&vjs=3',1,1,1),(2,'IT Help Desk – Tier 2',NULL,NULL,'https://communicationresources.bamboohr.com/careers/61',2,1,2),(3,'IT Technician',NULL,NULL,'https://www.indeed.com/viewjob?jk=b287a4df7f7c7e71&tk=1j5uqq318gooq8bg&from=serp&vjs=3',3,1,3),(4,'CRP Hardware Asset Manager',NULL,NULL,'https://www.indeed.com/viewjob?jk=093eb526c87964ed&tk=1j5uqq318gooq8bg&from=serp&vjs=3',4,2,NULL),(14,'update test','2005-05-05','2025-05-30','',4,3,2);
 /*!40000 ALTER TABLE `job` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -286,4 +287,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-16 23:30:09
+-- Dump completed on 2025-11-23  1:56:40
