@@ -10,24 +10,101 @@
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Position</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for contact in contacts %}
             <tr>
                 <td>{{ contact.company.name }}</td>
-                <td>{{ contact.name }}</a></td>
+                <td>{{ contact.name }}</td>
                 <td>{{ contact.email }}</td>
                 <td>{{ contact.phone }}</td>
                 <td>{{ contact.position }}</td>
-                <td>  <a href="/contact/delete/{{contact.id}}">Delete</a>,
-    <a href="/contact/update/{{contact.id}}">Update</a> </td>
+                <td>
+                    <button onclick="showDeleteForm({{ contact.id }})">Delete</button>
+                    <button onclick="showUpdateForm({{ contact.id }})">Update</button>
+                </td>
+            </tr>
+            <tr id="delete-form-{{ contact.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #f8d7da; padding: 15px;">
+                    <form method="POST" action="/contact/delete/{{ contact.id }}" style="margin: 0;">
+                        <strong>Deleting: {{ contact.name }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="confirm-name-{{ contact.id }}">Confirm contact name:</label>
+                            <input type="text" id="confirm-name-{{ contact.id }}" name="name" required>
+                        </div>
+                        <button type="submit">Confirm Delete</button>
+                        <button type="button" onclick="hideDeleteForm({{ contact.id }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="update-form-{{ contact.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #d1ecf1; padding: 15px;">
+                    <form method="POST" action="/contact/update/{{ contact.id }}" style="margin: 0;">
+                        <strong>Updating: {{ contact.name }}</strong>
+                        <div class="form-group">
+                            <label>Company:</label>
+                            <select name="company_id" id="contactSelect">
+                                <option value="">Select a company</option>
+                                {% for company in companies %}
+                                <option value="{{ company.id }}">{{ company.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-name-{{ contact.id }}">Contact name:</label>
+                            <input type="text" id="update-name-{{ contact.id }}" name="name" value="{{ contact.name }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-email-{{ contact.id }}">Email:</label>
+                            <input type="email" id="update-email-{{ contact.id }}" name="email" value="{{ contact.email }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-phone-{{ contact.id }}">Phone number:</label>
+                            <input type="tel" id="update-phone-{{ contact.id }}" name="phone" value="{{ contact.phone }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-position-{{ contact.id }}">Position:</label>
+                            <input type="text" id="update-position-{{ contact.id }}" name="position" value="{{ contact.position }}" required>
+                        </div>
+                        <button type="submit">Confirm Update</button>
+                        <button type="button" onclick="hideUpdateForm({{ contact.id }})">Cancel</button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <h3><a href="/contact/new">Add a contact</a></h3>
-   
+
+    <script>
+        function showDeleteForm(contactId) {
+            hideAllForms();
+            document.getElementById('delete-form-' + contactId).style.display = 'table-row';
+        }
+
+        function hideDeleteForm(contactId) {
+            document.getElementById('delete-form-' + contactId).style.display = 'none';
+            document.getElementById('confirm-name-' + contactId).value = '';
+        }
+
+        function showUpdateForm(contactId) {
+            hideAllForms();
+            document.getElementById('update-form-' + contactId).style.display = 'table-row';
+        }
+
+        function hideUpdateForm(contactId) {
+            document.getElementById('update-form-' + contactId).style.display = 'none';
+        }
+
+        function hideAllForms() {
+            document.querySelectorAll('[id^="delete-form-"], [id^="update-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+    </script>
+
 </body>
 
 {% include "footer.html" %}

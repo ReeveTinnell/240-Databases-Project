@@ -112,12 +112,12 @@ def jobs():
         joinedload(Job.contract),
         joinedload(Job.certs)
         ).all()
-    return(render_template('jobs.html', jobs=jobs))
+    return(render_template('viewJobs.html', jobs=jobs))
 
 @app.route('/job/<int:id>', methods=['GET'])
 def job(id):
     job = Job.query.get(id)
-    return(render_template('job.html', job=job))
+    return(render_template('viewJob.html', job=job))
 
 #   UPDATE
 @app.route('/job/update/<int:id>', methods =['GET'])
@@ -210,21 +210,22 @@ def updateJob(id):
 
 
 #   DELETE
-@app.route('/job/delete/<int:id>', methods=['GET'])
-def deleteJobForm(id):
-    job = Job.query.get(id)
-    return(render_template('deleteJob.html', job=job))
-
 @app.route('/job/delete/<int:id>', methods=['POST'])
-def deleteJobFromTable(id):
+def deleteJob(id):
     job = Job.query.get(id)
-    for cert in job.certs:
-        del_job_cert = JobCert.query.filter_by(job=id, cert=cert.id).first()
-        db.session.delete(del_job_cert)
+    
+    if job.title == request.form['title']:
+        for cert in job.certs:
+            del_job_cert = JobCert.query.filter_by(job=id, cert=cert.id).first()
+            db.session.delete(del_job_cert)
+            db.session.commit()
+        db.session.delete(job)
         db.session.commit()
-    db.session.delete(job)
-    db.session.commit()
-    return redirect(url_for('jobs'))
+        return redirect('/job/all')
+    else:
+        flash('Certification name does not match. Deletion cancelled.', 'error')
+        return redirect(f'/cert/delete/{id}')
+
 
 
 #               CERTIFICATIONS
@@ -267,10 +268,6 @@ def cert(id):
     return(render_template('cert.html', cert=cert))
 
 #   UPDATE
-@app.route('/cert/update/<int:id>', methods=['GET'])
-def updateCertForm(id):
-    cert = Cert.query.get(id)
-    return(render_template('updateCert.html', cert=cert))
 
 @app.route('/cert/update/<int:id>', methods=['POST'])
 def updateCert(id):
@@ -288,11 +285,6 @@ def updateCert(id):
 
 
 #   DELETE
-@app.route('/cert/delete/<int:id>')
-def deleteCert(id):
-    output = render_template('deleteCert.html', id=id)
-    return output
-
 @app.route('/cert/delete/<int:id>', methods=['POST'])
 def deleteCertFromTable(id):
 
@@ -386,14 +378,8 @@ def addCompanyToList():
 
     return redirect(url_for('viewCompanies'))
 
-@app.route('/company/delete/<int:company>', methods=['GET'])
-def deleteCompany(company):
-    company = Company.query.get(company)
-    print(company)
-    return(render_template('deleteCompany.html', company=company))
-    
 @app.route('/company/delete/<int:company>', methods=['POST'])
-def deleteCompanyFromTable(company):
+def deleteCompany(company):
 
     company = Company.query.get(company)
     
@@ -408,14 +394,7 @@ def deleteCompanyFromTable(company):
     else:
         db.session.delete(company)
         db.session.commit()
-        return redirect(url_for('viewCompanies'))
-
-@app.route('/company/update/<int:company>')
-def updateCompany(company):
-    company = Company.query.get(company)
-    output = render_template('updateCompanyForm.html', company=company)
-    return output
-
+        return redirect('/company/all')
 
 @app.route('/company/update/<int:company>', methods=['POST'])
 def updateCompanyEntry(company):
@@ -438,7 +417,8 @@ def updateCompanyEntry(company):
 @app.route('/contact/all')
 def viewContacts():
     contacts = Contact.query.all()
-    return(render_template('viewContacts.html', contacts=contacts))
+    companies = Company.query.all()
+    return(render_template('viewContacts.html', contacts=contacts, companies=companies))
 
 @app.route('/contact/new')
 def newContactForm():
@@ -458,10 +438,6 @@ def newContact():
     db.session.commit()
     return redirect(url_for('viewContacts'))
 
-@app.route('/contact/delete/<int:id>', methods=['GET'])
-def deleteContactdForm(id):
-    contact = Contact.query.get(id)
-    return(render_template('deleteContact.html', contact=contact))
 
 @app.route('/contact/delete/<int:id>', methods=['POST'])
 def deleteContact(id):
@@ -483,12 +459,6 @@ def newContactAPI():
     db.session.add(new_contact)
     db.session.commit()
     return jsonify({'id': new_contact.id, 'name': new_contact.name})
-
-@app.route('/contact/update/<int:id>')
-def updateContactForm(id):
-    contact = Contact.query.get(id)
-    companies = Company.query.all()
-    return(render_template('updateContactForm.html', contact=contact, companies=companies))
 
 @app.route('/contact/update/<int:id>', methods=['POST'])
 def updateContact(id):
@@ -552,12 +522,6 @@ def newRole():
     
     return redirect(url_for('viewRoles'))
 
-@app.route('/role/update/<int:id>')
-def updateRoleForm(id):
-    
-    role = Role.query.get(id)
-    return(render_template('updateRole.html', role=role))
-
 @app.route('/role/update/<int:id>', methods=['POST'])
 def updateRole(id):
     
@@ -570,13 +534,6 @@ def updateRole(id):
     db.session.commit()
     
     return redirect(url_for('viewRoles'))
-
-@app.route('/role/delete/<int:id>')
-def deleteRoleForm(id):
-
-    role = Role.query.get(id)
-    
-    return(render_template('deleteRole.html', role=role))
     
 @app.route('/role/delete/<int:id>', methods=['POST'])
 def deleteRole(id):

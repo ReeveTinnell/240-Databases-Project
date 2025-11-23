@@ -10,7 +10,7 @@
                 <th>Location</th>
                 <th>Size</th>
                 <th>Website</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,14 +21,85 @@
                 <td>{{ company.location }}</td>
                 <td>{{ company.size }}</td>
                 <td>{{ company.website }}</td>
-                <td>  <a href="/company/delete/{{ company.id }}">Delete</a>,
-    <a href="/company/update/{{ company.id }}">Update</a> </td>
+                <td>
+                    <button onclick="showDeleteForm({{ company.id }})">Delete</button>
+                    <button onclick="showUpdateForm({{ company.id }})">Update</button>
+                </td>
+            </tr>
+            <tr id="delete-form-{{ company.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #f8d7da; padding: 15px;">
+                    <form method="POST" action="/company/delete/{{ company.id }}" style="margin: 0;">
+                        <strong>Deleting: {{ company.name }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="confirm-name-{{ company.id }}">Confirm company name:</label>
+                            <input type="text" id="confirm-name-{{ company.id }}" name="name" required>
+                        </div>
+                        <button type="submit">Confirm Delete</button>
+                        <button type="button" onclick="hideDeleteForm({{ company.id }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="update-form-{{ company.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #d1ecf1; padding: 15px;">
+                    <form method="POST" action="/company/update/{{ company.id }}" style="margin: 0;">
+                        <strong>Updating: {{ company.name }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-name-{{ company.id }}">Company name:</label>
+                            <input type="text" id="update-name-{{ company.id }}" name="name" value="{{ company.name }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-industry-{{ company.id }}">Industry:</label>
+                            <input type="text" id="update-industry-{{ company.id }}" name="industry" value="{{ company.industry }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-location-{{ company.id }}">Location:</label>
+                            <input type="text" id="update-location-{{ company.id }}" name="location" value="{{ company.location }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-size-{{ company.id }}">Size:</label>
+                            <input type="text" id="update-size-{{ company.id }}" name="size" value="{{ company.size }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-website-{{ company.id }}">Website:</label>
+                            <input type="text" id="update-website-{{ company.id }}" name="website" value="{{ company.website }}" required>
+                        </div>
+                        <button type="submit">Confirm Update</button>
+                        <button type="button" onclick="hideUpdateForm({{ company.id }})">Cancel</button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <h3><a href="/company/new">Add a new Company</a></h3>
-   
+
+    <script>
+        function showDeleteForm(companyId) {
+            hideAllForms();
+            document.getElementById('delete-form-' + companyId).style.display = 'table-row';
+        }
+
+        function hideDeleteForm(companyId) {
+            document.getElementById('delete-form-' + companyId).style.display = 'none';
+            document.getElementById('confirm-name-' + companyId).value = '';
+        }
+
+        function showUpdateForm(companyId) {
+            hideAllForms();
+            document.getElementById('update-form-' + companyId).style.display = 'table-row';
+        }
+
+        function hideUpdateForm(companyId) {
+            document.getElementById('update-form-' + companyId).style.display = 'none';
+        }
+
+        function hideAllForms() {
+            document.querySelectorAll('[id^="delete-form-"], [id^="update-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+    </script>
+
 </body>
 
 {% include "footer.html" %}

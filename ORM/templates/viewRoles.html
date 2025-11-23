@@ -8,24 +8,91 @@
                 <th>Role Title</th>
                 <th>Average Hourly Wage</th>
                 <th>Description</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
              {% for role in roles %}
             <tr>
                 <td>{{ role.title }}</td>
-                <td>{{ role.avg_wage }}</a></td>
+                <td>{{ role.avg_wage }}</td>
                 <td>{{ role.description }}</td>
-                <td>  <a href="/role/delete/{{ role.id }}">Delete</a>,
-    <a href="/role/update/{{ role.id }}">Update</a> </td>
+                <td>
+                    <button onclick="showDeleteForm({{ role.id }}, '{{ role.title }}')">Delete</button>
+                    <button onclick="showUpdateForm({{ role.id }})">Update</button>
+                </td>
             </tr>
-        {% endfor %}
+            <tr id="delete-form-{{ role.id }}" style="display: none;">
+                <td colspan="4" style="background-color: #f8d7da; padding: 15px;">
+                    <form method="POST" action="/role/delete/{{ role.id }}" style="margin: 0;">
+                        <strong>Deleting: {{ role.title }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="confirm-title-{{ role.id }}">Confirm role title:</label>
+                            <input type="text" id="confirm-title-{{ role.id }}" name="title" required>
+                        </div>
+                        <button type="submit">Confirm Delete</button>
+                        <button type="button" onclick="hideDeleteForm({{ role.id }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="update-form-{{ role.id }}" style="display: none;">
+                <td colspan="4" style="background-color: #f8d7da; padding: 15px;">
+                    <form method="POST" action="/role/update/{{ role.id }}" style="margin: 0;">
+                        <strong>Deleting: {{ role.title }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-title-{{ role.id }}">Update role title:</label>
+                            <input type="text" id="update-title-{{ role.id }}" name="title" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-wage-{{ role.id }}">Update role average hourly wage:</label>
+                            <input type="text" id="update-wage-{{ role.id }}" name="avg_wage" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-desc-{{ role.id }}">Update role description:</label>
+                            <input type="text" id="update-desc-{{ role.id }}" name="description" required>
+                        </div>
+                        <button type="submit">Confirm Update</button>
+                        <button type="button" onclick="hideUpdateForm({{ role.id }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
-</br>
-   <h3><a href="/role/new">Add a role</a></h3>
+    <br>
+    <h3><a href="/role/new">Add a role</a></h3>
 
-   
+    <script>
+        function showDeleteForm(roleId, roleTitle) {
+            // Hide all other delete forms
+            document.querySelectorAll('[id^="delete-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+            // Show the selected delete form
+            document.getElementById('delete-form-' + roleId).style.display = 'table-row';
+        }
+
+        function hideDeleteForm(roleId) {
+            document.getElementById('delete-form-' + roleId).style.display = 'none';
+            // Clear the input field
+            document.getElementById('confirm-title-' + roleId).value = '';
+        }
+
+        function showUpdateForm(roleId) {
+            // Hide all other delete forms
+            document.querySelectorAll('[id^="update-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+            // Show the selected delete form
+            document.getElementById('update-form-' + roleId).style.display = 'table-row';
+        }
+
+        function hideUpdateForm(roleId) {
+            document.getElementById('update-form-' + roleId).style.display = 'none';
+            // Clear the input field
+            document.getElementById('update-title-' + roleId).value = '';
+        }
+    </script>
 </body>
 
 {% include "footer.html" %}

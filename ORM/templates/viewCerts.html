@@ -20,14 +20,85 @@
                 <td>{{ cert.cost }}</td>
                 <td>{{ cert.requirements }}</td>
                 <td>{{ cert.link }}</td>
-                <td>  <a href="/cert/delete/{{cert.id}}">Delete</a>,
-    <a href="/cert/update/{{cert.id}}">Update</a> </td>
+                <td>
+                    <button onclick="showDeleteForm({{ cert.id }})">Delete</button>
+                    <button onclick="showUpdateForm({{ cert.id }})">Update</button>
+                </td>
+            </tr>
+            <tr id="delete-form-{{ cert.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #f8d7da; padding: 15px;">
+                    <form method="POST" action="/cert/delete/{{ cert.id }}" style="margin: 0;">
+                        <strong>Deleting: {{ cert.name }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="confirm-name-{{ cert.id }}">Confirm certification name:</label>
+                            <input type="text" id="confirm-name-{{ cert.id }}" name="name" required>
+                        </div>
+                        <button type="submit">Confirm Delete</button>
+                        <button type="button" onclick="hideDeleteForm({{ cert.id }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="update-form-{{ cert.id }}" style="display: none;">
+                <td colspan="6" style="background-color: #d1ecf1; padding: 15px;">
+                    <form method="POST" action="/cert/update/{{ cert.id }}" style="margin: 0;">
+                        <strong>Updating: {{ cert.name }}</strong>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-name-{{ cert.id }}">Certification name:</label>
+                            <input type="text" id="update-name-{{ cert.id }}" name="name" value="{{ cert.name }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-cert-body-{{ cert.id }}">Certifying body:</label>
+                            <input type="text" id="update-cert-body-{{ cert.id }}" name="cert_body" value="{{ cert.cert_body }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-cost-{{ cert.id }}">Cost:</label>
+                            <input type="number" step="0.01" id="update-cost-{{ cert.id }}" name="cost" value="{{ cert.cost }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-requirements-{{ cert.id }}">Requirements:</label>
+                            <input type="text" id="update-requirements-{{ cert.id }}" name="requirements" value="{{ cert.requirements }}" required>
+                        </div>
+                        <div class="form-group" style="margin: 10px 0;">
+                            <label for="update-link-{{ cert.id }}">Link:</label>
+                            <input type="text" id="update-link-{{ cert.id }}" name="link" value="{{ cert.link }}" required>
+                        </div>
+                        <button type="submit">Confirm Update</button>
+                        <button type="button" onclick="hideUpdateForm({{ cert.id }})">Cancel</button>
+                    </form>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <h3><a href="{{ url_for('addCertForm') }}">Add a certification</a></h3>
-   
+
+    <script>
+        function showDeleteForm(certId) {
+            hideAllForms();
+            document.getElementById('delete-form-' + certId).style.display = 'table-row';
+        }
+
+        function hideDeleteForm(certId) {
+            document.getElementById('delete-form-' + certId).style.display = 'none';
+            document.getElementById('confirm-name-' + certId).value = '';
+        }
+
+        function showUpdateForm(certId) {
+            hideAllForms();
+            document.getElementById('update-form-' + certId).style.display = 'table-row';
+        }
+
+        function hideUpdateForm(certId) {
+            document.getElementById('update-form-' + certId).style.display = 'none';
+        }
+
+        function hideAllForms() {
+            document.querySelectorAll('[id^="delete-form-"], [id^="update-form-"]').forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+    </script>
+
 </body>
 
 {% include "footer.html" %}
