@@ -23,9 +23,12 @@ db.init_app(app)
 
 @app.route('/')
 def home():
+    return(render_template('home.html'))
+
+@app.route('/all')
+def allTables():
     tables = db.metadata.tables.keys()
-    print(tables)
-    return(render_template('home.html', tables=tables))
+    return(render_template('all.html', tables=tables))
 
 @app.route('/about')
 def about():
