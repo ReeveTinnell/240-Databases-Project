@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+<body>
+  <h3>Deleting <strong> {{ role.title }} </strong></h3>
+
+  <form method="POST" action="/role/delete/{{ role.id }}">
+
+        <div class="form-group">
+            <label for="title">Confirm role title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <button type="submit">Delete Role</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}

@@ -304,7 +304,7 @@ def deleteCertFromTable(id):
 
     if cert.name != name:
         flash('Certification name does not match. Deletion cancelled.', 'error')
-        return redirect(f'/deleteCert/{id}')
+        return redirect(f'/cert/delete/{id}')
     else:
         db.session.delete(cert)
         db.session.commit()
@@ -546,12 +546,51 @@ def newRoleForm():
 @app.route('/role/new', methods=['POST'])
 def newRole():
     
-    newRole = Role(title=request.form['name'], avg_wage=reqest.form['avg_wage'], description=request.form['description'])
+    newRole = Role(title=request.form['title'], avg_wage=request.form['avg_wage'], description=request.form['description'])
     db.session.add(newRole)
-    db.sesssion.commit()
+    db.session.commit()
     
     return redirect(url_for('viewRoles'))
 
+@app.route('/role/update/<int:id>')
+def updateRoleForm(id):
+    
+    role = Role.query.get(id)
+    return(render_template('updateRole.html', role=role))
+
+@app.route('/role/update/<int:id>', methods=['POST'])
+def updateRole(id):
+    
+    role = Role.query.get(id)
+    
+    role.title = request.form['title']
+    role.avg_wage = request.form['avg_wage']
+    role.description = request.form['description']
+    
+    db.session.commit()
+    
+    return redirect(url_for('viewRoles'))
+
+@app.route('/role/delete/<int:id>')
+def deleteRoleForm(id):
+
+    role = Role.query.get(id)
+    
+    return(render_template('deleteRole.html', role=role))
+    
+@app.route('/role/delete/<int:id>', methods=['POST'])
+def deleteRole(id):
+    
+    role = Role.query.get(id)
+    
+    if role.title == request.form['title']:
+        db.session.delete(role)
+        db.session.commit()
+        return redirect('/role/all')
+    else:
+        flash('Role title does not match. Deletion cancelled.', 'error')
+        return redirect(f'/cert/delete/{id}')
+        
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True, host="0.0.0.0")

@@ -1,0 +1,43 @@
+{% include "header.html" %}
+
+<body>
+  <h3> Update a role in the database</h3>
+
+   <table>
+        <thead>
+            <tr>
+                <th>Job Role</th>
+                <th>Average Hourly Wage</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ role.title }}</td>
+                <td>{{ role.avg_wage }}</td>
+                <td>{{ role.description }}</td>
+
+            </tr>
+        </tbody>
+    </table>
+  
+  <form method="POST" action="/role/update/{{ role.id }}">
+        <div class="form-group">
+            <label for="title">New role title:</label>
+            <input type="text" id="title" name="title">
+        </div>
+        <div class="form-group">
+            <label for="avg_wage">New Average Hourly Wage</label>
+            <input type="number" step="0.01" id="avg_wage" name="avg_wage">
+        </div>
+        <div class="form-group">
+            <label for="description">New Description:</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <button type="submit">Update Role</button>
+    </form>
+
+</body>
+
+
+{% include "footer.html" %}
