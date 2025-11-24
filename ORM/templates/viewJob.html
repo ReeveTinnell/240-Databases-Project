@@ -47,14 +47,20 @@
         <em>None</em>
     {% endif %}
     <br>
+    {% if session.user_id %}
     <a href="/addJobCertForm/{{ job.id }}" style="color: green; margin-top: 5px; display: inline-block;">+ Add Certification</a>
+    {% endif %}
+      
+    </li>
+
 </li>
-</li>
-    </ol>
+      {% if session.user_id %} 
+          </ol>
     <p>
         <a href="/job/delete//{{job.id}}">Delete</a>,
         <a href="/job/update/{{job.id}}">Update</a>
     </p>
+      {% endif %}
 </body>
 
 {% include "footer.html" %}

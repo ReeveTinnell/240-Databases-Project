@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -14,8 +15,6 @@ class Cert(db.Model):
     link = db.Column(db.Text, nullable=True)
 
     jobs = db.relationship('Job', secondary='job_cert', viewonly='true')
-
-
 
 class Company(db.Model):
     # Connecting class to database table name
@@ -132,3 +131,23 @@ class Role(db.Model):
     title = db.Column(db.String(50), unique=True, nullable=False)
     avg_wage = db.Column(db.Numeric(5, 2), nullable=True)
     description = db.Column(db.Text, nullable=True)
+    
+class User(db.Model):
+    
+    __tablename__ = 'user'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(25), unique=True, nullable=False)
+    hash = db.Column(db.String(255), nullable=False)
+    
+    def __init__(self, username, hash):
+        self.username = username
+        self.hash = hash
+    
+    def check_password(self, password):
+        return check_password_hash(self.hash, password)
+        
+    def set_password(self, password):
+        self.hash = generate_password_hash(password)
+        print(self.hash)
+

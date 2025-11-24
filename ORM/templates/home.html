@@ -1,11 +1,29 @@
 {% include "header.html" %}
 <br>
-<h2 class="center-header">Click a table to view and modify it</h2>
+<h2 class="center-header">Click a table to view the conetents. Want CRUD? Then login! </h2>
 
 <div style="text-align: center; margin-top: 2rem;">
   <a href="/companies" style="margin: 0 1.5rem; font-size: 2.5rem;">Companies</a>
   <a href="/cert/all" style="margin: 0 1.5rem; font-size: 2.5rem;">Certifications</a>
   <a href="/job/all" style="margin: 0 1.5rem; font-size: 2.5rem;">Jobs</a>
 </div>
+  
+<br>
+{% if session.user_id %}
+  <form method="POST" action="/logout">
+       <button type="submit">Logout</button>
+  </form>
+{% else %}
+<h2>Login</h2>
+    <form method="POST" action="/login">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username"required>
+        
+        <label for="password">Password:</label>
+        <input type="text" name="password" id="password" required>
+        
+        <button type="submit">Logout</button>
+    </form>
 
+{% endif %}
 {% include "footer.html" %}

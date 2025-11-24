@@ -1,25 +1,34 @@
 #! /usr/bin/python3
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
 from models import *
 from sqlalchemy.orm import joinedload
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
-app = Flask(__name__) # creates a flask application object
+app = Flask(__name__) 
 
 with open('secrets.json', 'r') as secretFile:
     creds = json.load(secretFile)['mysqlCredentials']
 
-# example database uri = "mysql+pymysql://jeff:mypass@localhost/sakila"
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{creds['user']}:{creds['password']}@{creds['host']}/{creds['db']}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = creds['secret_key']
 
 db.init_app(app)
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("logged_in"):
+            flash("Please log in.")
+            return jsonify({"status": 0, "message": "Please log in."}), 401
+        return f(*args, **kwargs)
 
+    return decorated_function
 
 @app.route('/')
 def home():
@@ -33,15 +42,42 @@ def allTables():
 @app.route('/about')
 def about():
     return(render_template('about.html'))
+    
+@app.route('/logout', methods=['POST'])
+def logout():
+    user = User.query.get(session['user_id'])
+    
+    session.pop('user_id', None)
+    session.pop('username', None)
+    flash('You have lost CRUD', 'info')
+    return redirect('/')
+
+@app.route('/login', methods=['POST'])
+def login():
+    
+    username = request.form['username']
+    password = request.form['password']
+    
+    user = User.query.filter_by(username=username).first()
+    
+    if user and user.check_password(password):
+        session['user_id'] = user.id
+        session['username'] = user.username
+        flash('You have CRUD!', 'success')
+        return redirect('/')
+    else:
+        flash('You have entered incorrect credentials!')
+        return redirect('/')
 
 #               JOBS
 
 
 #   CREATE
 @app.route('/job/new', methods=['GET', 'POST'])
+@login_required
 def newJob():
     if request.method == 'POST':
-        # Get job data
+
         job_data = {
             'title': request.form['title'],
             'post_date': datetime.strptime(request.form['post_date'], '%Y-%m-%d') if request.form.get('post_date') else None,
@@ -52,12 +88,12 @@ def newJob():
             'contact_id': int(request.form['contact_id']) if request.form.get('contact_id') else None
         }
 
-        # Create job
+
         new_job = Job(**job_data)
         db.session.add(new_job)
-        db.session.flush()  # Get the job.id before committing
+        db.session.flush() 
 
-        # Handle job type (ft, pt, or contract)
+
         job_type = request.form['job_type']
         if job_type == 'full_time':
             ft = Ft(
@@ -84,7 +120,7 @@ def newJob():
             )
             db.session.add(contract)
 
-        # Handle certifications (many-to-many)
+
         cert_ids = request.form.getlist('cert_ids')
         for cert_id in cert_ids:
             if cert_id:
@@ -124,6 +160,7 @@ def job(id):
 
 #   UPDATE
 @app.route('/job/update/<int:id>', methods =['GET'])
+@login_required
 def updateJobForm(id):
     job = Job.query.options(
         joinedload(Job.ft),
@@ -139,6 +176,7 @@ def updateJobForm(id):
 
 
 @app.route('/job/update/<int:id>', methods =['POST'])
+@login_required
 def updateJob(id):
     job = Job.query.options(
         joinedload(Job.ft),
@@ -192,7 +230,7 @@ def updateJob(id):
             db.session.delete(contract)
 
     
-    # Handle certifications (many-to-many)
+
     updateCertIds = request.form.getlist('cert_ids')
     
     updateCertIds = [int(cert_id) for cert_id in updateCertIds if cert_id]
@@ -214,7 +252,9 @@ def updateJob(id):
 
 #   DELETE
 @app.route('/job/delete/<int:id>', methods=['POST'])
+@login_required
 def deleteJob(id):
+
     job = Job.query.get(id)
     
     if job.title == request.form['title']:
@@ -228,16 +268,34 @@ def deleteJob(id):
     else:
         flash('Certification name does not match. Deletion cancelled.', 'error')
         return redirect(f'/cert/delete/{id}')
+        
+#           SUBTYPE READS (NO direct CUD)
+@app.route('/contract/all')
+def viewContracts():
+    contracts = Contract.query.all()
+    return(render_template('viewContracts.html', contracts=contracts))
+    
+@app.route('/full_time/all')
+def viewFt():
+    ftJobs = Ft.query.all()
+    return(render_template('viewFt.html', ftJobs=ftJobs))
+
+@app.route('/part_time/all')
+def viewPt():
+    ptJobs = Pt.query.all()
+    return(render_template('viewPt.html', ptJobs=ptJobs))
 
 
 
 #               CERTIFICATIONS
 #   CREATE
 @app.route('/cert/new')
+@login_required
 def addCertForm():
     return(render_template('addCert.html'))
 
 @app.route('/cert/new', methods=['POST'])
+@login_required
 def addCert():
     new_cert = Cert(name=request.form['name'], cert_body=request.form['cert_body'], cost=request.form['cost'], requirements=request.form['requirements'], link=request.form['link'])
     db.session.add(new_cert)
@@ -246,6 +304,7 @@ def addCert():
 
 #   CREATE endpoint for 'newJob'
 @app.route('/api/cert', methods=['POST'])
+@login_required
 def create_cert():
     data = request.json
     new_cert = Cert(
@@ -273,6 +332,7 @@ def cert(id):
 #   UPDATE
 
 @app.route('/cert/update/<int:id>', methods=['POST'])
+@login_required
 def updateCert(id):
     cert = Cert.query.get(id)
 
@@ -289,6 +349,7 @@ def updateCert(id):
 
 #   DELETE
 @app.route('/cert/delete/<int:id>', methods=['POST'])
+@login_required
 def deleteCertFromTable(id):
 
     name = request.form['name']
@@ -309,12 +370,14 @@ def deleteCertFromTable(id):
 
 #   Create
 @app.route('/job_cert/add/<int:id>')
+@login_required
 def addJobCertForm(id):
     job = Job.query.get(id)
     certs = Cert.query.all()
     return(render_template('addJobCertForm.html', job=job, certs=certs))
 
 @app.route('/job_cert/add/<int:job>/<int:cert>', methods=['GET'])
+@login_required
 def addJobCert(job, cert):
     new_job_cert = JobCert(job=job, cert=cert)
     db.session.add(new_job_cert)
@@ -330,6 +393,7 @@ def viewJobCerts():
 
 #   DELETE
 @app.route('/job_cert/delete/<int:job>/<int:cert>', methods=['GET'])
+@login_required
 def defJobCert(job, cert):
 
     del_job_cert = JobCert.query.filter_by(job=job, cert=cert).first()
@@ -346,6 +410,7 @@ def defJobCert(job, cert):
 #   CREATE
 
 @app.route('/api/company', methods=['POST'])
+@login_required
 def create_company():
     data = request.json
     newCompany = Company(
@@ -368,11 +433,13 @@ def viewCompanies():
 
 #   CREATE
 @app.route('/company/new')
+@login_required
 def addCompany():
     output = render_template('addCompany.html')
     return output
 
 @app.route('/company/new', methods=['POST'])
+@login_required
 def addCompanyToList():
 
     new_company = Company(name=request.form['name'], industry=request.form['industry'], location=request.form['location'], size=request.form['size'], website=request.form['website'])
@@ -382,6 +449,7 @@ def addCompanyToList():
     return redirect(url_for('viewCompanies'))
 
 @app.route('/company/delete/<int:company>', methods=['POST'])
+@login_required
 def deleteCompany(company):
 
     company = Company.query.get(company)
@@ -400,6 +468,7 @@ def deleteCompany(company):
         return redirect('/company/all')
 
 @app.route('/company/update/<int:company>', methods=['POST'])
+@login_required
 def updateCompanyEntry(company):
     
     company = Company.query.get(company)
@@ -415,41 +484,16 @@ def updateCompanyEntry(company):
     return redirect(url_for('viewCompanies'))
 
 #               CONTACTS
+
 #   CREATE
-
-@app.route('/contact/all')
-def viewContacts():
-    contacts = Contact.query.all()
-    companies = Company.query.all()
-    return(render_template('viewContacts.html', contacts=contacts, companies=companies))
-
 @app.route('/contact/new')
+@login_required
 def newContactForm():
     companies = Company.query.all()
     return(render_template('addContact.html', companies=companies))
-
-@app.route('/contact/new', methods=['POST'])
-def newContact():
-    newContact = Contact(
-        name=request.form['name'],
-        email=request.form['email'],
-        phone=request.form['phone'],
-        position=request.form['position'],
-        company_id=int(request.form['company_id'])
-    )
-    db.session.add(newContact)
-    db.session.commit()
-    return redirect(url_for('viewContacts'))
-
-
-@app.route('/contact/delete/<int:id>', methods=['POST'])
-def deleteContact(id):
-    contact = Contact.query.get(id)
-    db.session.delete(contact)
-    db.session.commit()
-    return redirect(url_for('viewContacts'))
     
 @app.route('/api/contact', methods=['POST'])
+@login_required
 def newContactAPI():
     data = request.json
     new_contact = Contact(
@@ -463,7 +507,40 @@ def newContactAPI():
     db.session.commit()
     return jsonify({'id': new_contact.id, 'name': new_contact.name})
 
+@app.route('/contact/new', methods=['POST'])
+@login_required
+def newContact():
+    newContact = Contact(
+        name=request.form['name'],
+        email=request.form['email'],
+        phone=request.form['phone'],
+        position=request.form['position'],
+        company_id=int(request.form['company_id'])
+    )
+    db.session.add(newContact)
+    db.session.commit()
+    return redirect(url_for('viewContacts'))
+
+#   READ
+@app.route('/contact/all')
+def viewContacts():
+    contacts = Contact.query.all()
+    companies = Company.query.all()
+    return(render_template('viewContacts.html', contacts=contacts, companies=companies))
+
+#   DELETE
+@app.route('/contact/delete/<int:id>', methods=['POST'])
+@login_required
+def deleteContact(id):
+    contact = Contact.query.get(id)
+    db.session.delete(contact)
+    db.session.commit()
+    return redirect(url_for('viewContacts'))
+
+    
+#   UPDATE
 @app.route('/contact/update/<int:id>', methods=['POST'])
+@login_required
 def updateContact(id):
     contact = Contact.query.get(id)
     
@@ -478,24 +555,12 @@ def updateContact(id):
     return redirect(url_for('viewContacts'))
 
 
-@app.route('/contract/all')
-def viewContracts():
-    contracts = Contract.query.all()
-    return(render_template('viewContracts.html', contracts=contracts))
-    
-@app.route('/full_time/all')
-def viewFt():
-    ftJobs = Ft.query.all()
-    return(render_template('viewFt.html', ftJobs=ftJobs))
 
-@app.route('/part_time/all')
-def viewPt():
-    ptJobs = Pt.query.all()
-    return(render_template('viewPt.html', ptJobs=ptJobs))
 
 #               ROLES
 #   CREATE
 @app.route('/api/role', methods=['POST'])
+@login_required
 def createRole():
     data = request.json
     newRole = Role(
@@ -513,10 +578,12 @@ def viewRoles():
     return(render_template('viewRoles.html', roles=roles))
     
 @app.route('/role/new')
+@login_required
 def newRoleForm():
     return(render_template('addRole.html'))
     
 @app.route('/role/new', methods=['POST'])
+@login_required
 def newRole():
     
     newRole = Role(title=request.form['title'], avg_wage=request.form['avg_wage'], description=request.form['description'])
@@ -526,6 +593,7 @@ def newRole():
     return redirect(url_for('viewRoles'))
 
 @app.route('/role/update/<int:id>', methods=['POST'])
+@login_required
 def updateRole(id):
     
     role = Role.query.get(id)
@@ -539,6 +607,7 @@ def updateRole(id):
     return redirect(url_for('viewRoles'))
     
 @app.route('/role/delete/<int:id>', methods=['POST'])
+@login_required
 def deleteRole(id):
     
     role = Role.query.get(id)

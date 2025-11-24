@@ -10,7 +10,6 @@
                 <th>Location</th>
                 <th>Size</th>
                 <th>Website</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,7 +20,9 @@
                 <td>{{ company.location }}</td>
                 <td>{{ company.size }}</td>
                 <td>{{ company.website }}</td>
-                <td>
+              {% if session.user_id %}  
+        
+              <td>
                     <button onclick="showDeleteForm({{ company.id }})">Delete</button>
                     <button onclick="showUpdateForm({{ company.id }})">Update</button>
                 </td>
@@ -68,6 +69,7 @@
                     </form>
                 </td>
             </tr>
+                {% endif %}
         {% endfor %}
         </tbody>
     </table>

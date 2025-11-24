@@ -20,6 +20,7 @@
                 <td>{{ cert.cost }}</td>
                 <td>{{ cert.requirements }}</td>
                 <td>{{ cert.link }}</td>
+               {% if session.user_id %}
                 <td>
                     <button onclick="showDeleteForm({{ cert.id }})">Delete</button>
                     <button onclick="showUpdateForm({{ cert.id }})">Update</button>
@@ -67,6 +68,7 @@
                     </form>
                 </td>
             </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

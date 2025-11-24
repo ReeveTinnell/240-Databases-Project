@@ -11,7 +11,6 @@
                 <th>Hyperlink</th>
                 <th>Job Type</th>
                 <th>Certifications</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +26,7 @@
                 <a href="cert/{{cert.id}}">{{cert.name}}</a>
                 {% endfor %}
                 </td>
+                 {% if session.user_id %}
                 <td>
                     <button onclick="showDeleteForm({{ job.id }})">Delete</button>
                 </td>
@@ -44,6 +44,7 @@
                     </form>
                 </td>
             </tr>
+                {% endif %}
         {% endfor %}
         </tbody>
     </table>

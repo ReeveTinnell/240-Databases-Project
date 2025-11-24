@@ -4,7 +4,9 @@
 <h2 class="center-header">All Tables</h2>
 <div style="text-align: center; margin-top: 2rem;">
   {% for table in tables %}
-  <a href="/{{ table }}/all" style="margin: 0 1.5rem; font-size: 2.0rem;">{{ table }}</a>
+    {% if table != 'user' %}
+      <a href="/{{ table }}/all" style="margin: 0 1.5rem; font-size: 2.0rem;">{{ table }}</a>
+    {% endif %}
   {% endfor %}
 
 {% include "footer.html" %}

@@ -8,7 +8,6 @@
                 <th>Role Title</th>
                 <th>Average Hourly Wage</th>
                 <th>Description</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -17,6 +16,7 @@
                 <td>{{ role.title }}</td>
                 <td>{{ role.avg_wage }}</td>
                 <td>{{ role.description }}</td>
+                {% if session.user_id %}
                 <td>
                     <button onclick="showDeleteForm({{ role.id }}, '{{ role.title }}')">Delete</button>
                     <button onclick="showUpdateForm({{ role.id }})">Update</button>
@@ -55,6 +55,7 @@
                         <button type="button" onclick="hideUpdateForm({{ role.id }})">Cancel</button>
                     </form>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

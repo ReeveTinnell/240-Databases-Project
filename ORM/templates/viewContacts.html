@@ -10,7 +10,6 @@
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Position</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +20,7 @@
                 <td>{{ contact.email }}</td>
                 <td>{{ contact.phone }}</td>
                 <td>{{ contact.position }}</td>
+               {% if session.user_id %}
                 <td>
                     <button onclick="showDeleteForm({{ contact.id }})">Delete</button>
                     <button onclick="showUpdateForm({{ contact.id }})">Update</button>
@@ -73,6 +73,7 @@
                     </form>
                 </td>
             </tr>
+                          {% endif %}
         {% endfor %}
         </tbody>
     </table>
