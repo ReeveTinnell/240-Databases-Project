@@ -5,7 +5,7 @@
   <ol>
   {% for cert in certs %}
     {% if cert not in job.certs %}
-    <li><a href="/jobcert/add/{{ job.id }}/{{ cert.id }}">Add {{ cert.name }}</a></li>
+    <li><a href="/job_cert/add/{{ job.id }}/{{ cert.id }}">Add {{ cert.name }}</a></li>
     {% endif %}
   {% endfor %}
   </ol>

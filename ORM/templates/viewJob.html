@@ -41,14 +41,14 @@
     <strong>Certifications:</strong>
     {% if job.certs %}
         {% for cert in job.certs %}
-            <a href="/cert/{{ cert.id }}" style="margin-right: 10px;">{{ cert.name }}</a>     ( <a href="/delJobCert/{{ job.id }}/{{ cert.id }}">delete</a> ) {% if not loop.last %} | {% endif %}
+            <a href="/cert/{{ cert.id }}" style="margin-right: 10px;">{{ cert.name }}</a>    {% if session.user_id %} ( <a href="/job_cert/delete/{{ job.id }}/{{ cert.id }}">delete</a> ) {% endif %} {% if not loop.last %} | {% endif %}
         {% endfor %}
     {% else %}
         <em>None</em>
     {% endif %}
     <br>
     {% if session.user_id %}
-    <a href="/addJobCertForm/{{ job.id }}" style="color: green; margin-top: 5px; display: inline-block;">+ Add Certification</a>
+    <a href="/job_cert/add/{{ job.id }}" style="color: green; margin-top: 5px; display: inline-block;">+ Add Certification</a>
     {% endif %}
       
     </li>

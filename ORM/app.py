@@ -23,7 +23,7 @@ db.init_app(app)
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("logged_in"):
+        if not session['user_id']:
             flash("Please log in.")
             return jsonify({"status": 0, "message": "Please log in."}), 401
         return f(*args, **kwargs)
@@ -369,10 +369,10 @@ def deleteCertFromTable(id):
 #             JOB_CERTS
 
 #   Create
-@app.route('/job_cert/add/<int:id>')
+@app.route('/job_cert/add/<int:job>')
 @login_required
-def addJobCertForm(id):
-    job = Job.query.get(id)
+def addJobCertForm(job):
+    job = Job.query.get(job)
     certs = Cert.query.all()
     return(render_template('addJobCertForm.html', job=job, certs=certs))
 
@@ -383,7 +383,7 @@ def addJobCert(job, cert):
     db.session.add(new_job_cert)
     db.session.commit()
     job = Job.query.get(job)
-    return(render_template('job.html', job=job))
+    return(render_template('viewJob.html', job=job))
 
 #   READ
 @app.route('/job_cert/all')
